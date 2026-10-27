@@ -50,7 +50,6 @@
       onSnapshot 
     } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
-    // Configuración oficial de tu proyecto
     const firebaseConfig = {
       apiKey: "AIzaSyCkbvZqBS-oNvcrJ2hdpto1QhyuqftClFU",
       authDomain: "futuro-del-equipo.firebaseapp.com",
@@ -63,14 +62,12 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Exportar al ámbito global para uso en la interfaz
     window.db = db;
     window.doc = doc;
     window.setDoc = setDoc;
     window.onSnapshot = onSnapshot;
     window.firebaseReady = true;
 
-    // Disparar evento de inicio de base de datos
     window.dispatchEvent(new Event('firebase-initialized'));
   </script>
 
@@ -136,12 +133,12 @@
           </button>
 
           <!-- Menú desplegable con alto contraste -->
-          <div id="profileDropdownMenu" class="hidden absolute right-0 mt-2 w-56 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl z-50 py-1.5 overflow-hidden">
+          <div id="profileDropdownMenu" class="hidden absolute right-0 mt-2 w-60 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl z-50 py-1.5 overflow-hidden">
             <div class="px-3 py-1.5 border-b border-slate-800 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
               Seleccionar integrante:
             </div>
             <div id="profileListItems" class="max-h-60 overflow-y-auto">
-              <!-- Se inyecta dinámicamente con JavaScript -->
+              <!-- Se inyecta dinámicamente -->
             </div>
           </div>
         </div>
@@ -246,9 +243,10 @@
           <input type="text" id="searchInput" oninput="renderApp()" placeholder="Buscar integrante u objetivo..." class="pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full sm:w-56">
         </div>
 
-        <button onclick="openNewMemberModal()" class="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-3 py-2 rounded-xl transition-colors">
-          <i class="fa-solid fa-user-plus text-slate-500"></i>
-          <span class="hidden md:inline">Nuevo Integrante</span>
+        <!-- Botón para Agregar Miembro -->
+        <button onclick="openNewMemberModal()" class="flex items-center gap-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-bold px-3 py-2 rounded-xl transition-colors shadow-sm">
+          <i class="fa-solid fa-user-plus text-indigo-600"></i>
+          <span>+ Agregar Integrante</span>
         </button>
 
         <button onclick="exportToCSV()" class="flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-semibold px-3 py-2 rounded-xl transition-colors">
@@ -264,7 +262,7 @@
         <table class="w-full text-left border-collapse min-w-[1100px]">
           <thead>
             <tr class="bg-navy-900 text-white text-[11px] uppercase tracking-wider font-bold">
-              <th class="py-3 px-4 border-b border-navy-800 w-44 sticky left-0 bg-navy-900 z-10">Integrante</th>
+              <th class="py-3 px-4 border-b border-navy-800 w-52 sticky left-0 bg-navy-900 z-10">Integrante</th>
               <th class="py-3 px-3 border-b border-navy-800 text-center w-28">Deja de ser tú</th>
               <th class="py-3 px-3 border-b border-navy-800 text-center w-28">McFarland</th>
               <th class="py-3 px-3 border-b border-navy-800 text-center w-28">Whiplash</th>
@@ -389,6 +387,57 @@
     </div>
   </div>
 
+  <!-- MODAL: RENOMBRAR / EDITAR NOMBRE DE INTEGRANTE -->
+  <div id="editMemberNameModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-slate-100">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+          <i class="fa-solid fa-user-pen text-indigo-600"></i>
+          Modificar Integrante
+        </h3>
+        <button onclick="closeEditMemberNameModal()" class="text-slate-400 hover:text-slate-600 text-sm">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      
+      <p class="text-xs text-slate-500 mb-3">Cambia el nombre de este integrante. Sus objetivos y justificaciones se mantendrán intactos.</p>
+      
+      <input type="hidden" id="editMemberIdInput">
+      <input type="text" id="editMemberNameInput" placeholder="Nombre completo..." class="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 font-semibold mb-4">
+      
+      <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+        <button type="button" onclick="confirmDeleteMember()" class="text-xs font-semibold text-rose-600 hover:text-rose-800 flex items-center gap-1">
+          <i class="fa-solid fa-trash-can"></i> Eliminar
+        </button>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="closeEditMemberNameModal()" class="px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg">Cancelar</button>
+          <button type="button" onclick="saveUpdatedMemberName()" class="px-4 py-1.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg shadow">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: AGREGAR NUEVO INTEGRANTE -->
+  <div id="newMemberModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-slate-100">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+          <i class="fa-solid fa-user-plus text-indigo-600"></i>
+          Agregar Nuevo Integrante
+        </h3>
+        <button onclick="closeNewMemberModal()" class="text-slate-400 hover:text-slate-600 text-sm">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <p class="text-xs text-slate-500 mb-4">Ingresa el nombre del nuevo miembro para registrarlo en la matriz y en la nube.</p>
+      <input type="text" id="newMemberNameInput" placeholder="Ej. Carlos Mendoza, Diana..." class="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4 font-semibold">
+      <div class="flex items-center justify-end gap-2">
+        <button onclick="closeNewMemberModal()" class="px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg">Cancelar</button>
+        <button onclick="saveNewMember()" class="px-4 py-1.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg shadow">Guardar en la Nube</button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL: DETALLE DEL 'POR QUÉ' (CONSULTA RÁPIDA) -->
   <div id="detailReasonModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden">
@@ -422,22 +471,8 @@
     </div>
   </div>
 
-  <!-- MODAL: AGREGAR NUEVO INTEGRANTE -->
-  <div id="newMemberModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-slate-100">
-      <h3 class="text-sm font-bold text-slate-800 mb-1">Agregar Nuevo Integrante</h3>
-      <p class="text-xs text-slate-500 mb-4">Ingresa el nombre del nuevo miembro para registrar sus 5 futuros.</p>
-      <input type="text" id="newMemberNameInput" placeholder="Nombre completo o apodo..." class="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4">
-      <div class="flex items-center justify-end gap-2">
-        <button onclick="closeNewMemberModal()" class="px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg">Cancelar</button>
-        <button onclick="saveNewMember()" class="px-4 py-1.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg shadow">Agregar</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- JAVASCRIPT PRINCIPAL Y SINCRONIZACIÓN CLOUD -->
+  <!-- JAVASCRIPT PRINCIPAL -->
   <script>
-    // Estructura base limpia: Los integrantes inician completamente vacíos para llenado colectivo
     const INITIAL_TEAM = [
       {
         id: "jesus",
@@ -517,15 +552,12 @@
     let currentMemberId = "armando";
     let isCloudConnected = false;
 
-    // Colores para avatares
     const AVATAR_COLORS = [
       'bg-indigo-600', 'bg-blue-600', 'bg-emerald-600', 
-      'bg-rose-600', 'bg-amber-600', 'bg-teal-600', 'bg-purple-600'
+      'bg-rose-600', 'bg-amber-600', 'bg-teal-600', 'bg-purple-600', 'bg-cyan-600'
     ];
 
-    // Inicialización del sistema
     document.addEventListener("DOMContentLoaded", () => {
-      // 1. Cargar almacenamiento local si existe
       const localData = localStorage.getItem('nexus_team_cloud_cache');
       if (localData) {
         try {
@@ -537,7 +569,6 @@
       renderApp();
       buildModalFuturesInputs();
 
-      // Escuchar conexión de Firebase
       if (window.firebaseReady) {
         initFirebaseSync();
       } else {
@@ -545,13 +576,12 @@
       }
     });
 
-    // Conexión y sincronización en tiempo real con Firestore
+    // Sincronización en tiempo real
     function initFirebaseSync() {
       const syncBadge = document.getElementById("syncBadge");
       try {
         const teamDocRef = window.doc(window.db, "equipos", "nexus_general");
 
-        // Escuchar cambios en vivo desde Firestore
         window.onSnapshot(teamDocRef, (docSnap) => {
           if (docSnap.exists()) {
             const data = docSnap.data();
@@ -562,7 +592,6 @@
               buildProfileDropdown();
             }
           } else {
-            // Si es la primera vez que se crea, subir los integrantes limpios
             window.setDoc(teamDocRef, { members: teamData }, { merge: true });
           }
 
@@ -580,20 +609,19 @@
       }
     }
 
-    // Guardar datos en la nube y persistir localmente
     async function persistTeamData() {
       localStorage.setItem('nexus_team_cloud_cache', JSON.stringify(teamData));
       if (window.db && window.setDoc && window.doc) {
         try {
           const teamDocRef = window.doc(window.db, "equipos", "nexus_general");
-          await window.setDoc(teamDocRef, { members: teamData }, { merge: true });
+          await window.setDoc(teamDocRef, { members: teamData });
         } catch (e) {
           console.error("Error al guardar en la nube:", e);
         }
       }
     }
 
-    // Menú de perfiles de alto contraste
+    // Selector de perfiles
     function buildProfileDropdown() {
       const listContainer = document.getElementById('profileListItems');
       listContainer.innerHTML = '';
@@ -602,19 +630,22 @@
         const color = AVATAR_COLORS[idx % AVATAR_COLORS.length];
         const isCurrent = m.id === currentMemberId;
 
-        const item = document.createElement('button');
-        item.type = 'button';
-        item.onclick = () => selectProfile(m.id);
-        item.className = `w-full text-left px-3 py-2 flex items-center justify-between transition-colors border-b border-slate-800/60 ${isCurrent ? 'bg-indigo-950/80 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}`;
+        const item = document.createElement('div');
+        item.className = `w-full px-3 py-2 flex items-center justify-between border-b border-slate-800/60 transition-colors ${isCurrent ? 'bg-indigo-950/80 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}`;
         
         item.innerHTML = `
-          <div class="flex items-center gap-2.5">
+          <button type="button" onclick="selectProfile('${m.id}')" class="flex-1 text-left flex items-center gap-2.5">
             <span class="w-6 h-6 rounded-md ${color} text-white font-bold text-xs flex items-center justify-center">
               ${m.name.charAt(0).toUpperCase()}
             </span>
-            <span class="text-xs font-semibold">${m.name}</span>
+            <span class="text-xs font-semibold truncate">${m.name}</span>
+          </button>
+          <div class="flex items-center gap-1.5 shrink-0">
+            ${isCurrent ? '<i class="fa-solid fa-check text-amber-400 text-xs mr-1"></i>' : ''}
+            <button type="button" title="Modificar nombre" onclick="openEditMemberNameModal('${m.id}', event)" class="p-1 text-slate-400 hover:text-amber-400 transition-colors">
+              <i class="fa-solid fa-pen-to-square text-xs"></i>
+            </button>
           </div>
-          ${isCurrent ? '<i class="fa-solid fa-check text-amber-400 text-xs"></i>' : ''}
         `;
         listContainer.appendChild(item);
       });
@@ -626,7 +657,6 @@
       menu.classList.toggle('hidden');
     }
 
-    // Cerrar menú al hacer clic afuera
     document.addEventListener('click', (e) => {
       const btn = document.getElementById('profileDropdownBtn');
       const menu = document.getElementById('profileDropdownMenu');
@@ -650,7 +680,92 @@
       document.getElementById('bannerName').innerText = current.name;
     }
 
-    // Renderizado general de la tabla y tarjetas
+    // MODAL: EDITAR / MODIFICAR NOMBRE
+    function openEditMemberNameModal(memberId, event) {
+      if (event) event.stopPropagation();
+      document.getElementById('profileDropdownMenu').classList.add('hidden');
+      
+      const member = teamData.find(m => m.id === memberId);
+      if (!member) return;
+
+      document.getElementById('editMemberIdInput').value = member.id;
+      document.getElementById('editMemberNameInput').value = member.name;
+      document.getElementById('editMemberNameModal').classList.remove('hidden');
+    }
+
+    function closeEditMemberNameModal() {
+      document.getElementById('editMemberNameModal').classList.add('hidden');
+    }
+
+    async function saveUpdatedMemberName() {
+      const id = document.getElementById('editMemberIdInput').value;
+      const newName = document.getElementById('editMemberNameInput').value.trim();
+      if (!newName) return;
+
+      const member = teamData.find(m => m.id === id);
+      if (member) {
+        member.name = newName;
+        closeEditMemberNameModal();
+        buildProfileDropdown();
+        renderApp();
+        await persistTeamData();
+      }
+    }
+
+    async function confirmDeleteMember() {
+      const id = document.getElementById('editMemberIdInput').value;
+      const member = teamData.find(m => m.id === id);
+      if (!member) return;
+
+      if (confirm(`¿Estás seguro de que deseas eliminar a "${member.name}" del equipo? Esta acción borrará sus futuros en la nube.`)) {
+        teamData = teamData.filter(m => m.id !== id);
+        if (currentMemberId === id && teamData.length > 0) {
+          currentMemberId = teamData[0].id;
+        }
+        closeEditMemberNameModal();
+        buildProfileDropdown();
+        renderApp();
+        await persistTeamData();
+      }
+    }
+
+    // MODAL: AGREGAR NUEVO INTEGRANTE
+    function openNewMemberModal() {
+      document.getElementById('newMemberNameInput').value = '';
+      document.getElementById('newMemberModal').classList.remove('hidden');
+    }
+
+    function closeNewMemberModal() {
+      document.getElementById('newMemberModal').classList.add('hidden');
+    }
+
+    async function saveNewMember() {
+      const name = document.getElementById('newMemberNameInput').value.trim();
+      if (!name) return;
+
+      const newId = name.toLowerCase().replace(/[^a-z0-9]/g, '_') + '_' + Date.now();
+      const newMember = {
+        id: newId,
+        name: name,
+        activities: [false, false, false, false],
+        futures: [
+          { goal: '', status: 'pending', reason: '' },
+          { goal: '', status: 'pending', reason: '' },
+          { goal: '', status: 'pending', reason: '' },
+          { goal: '', status: 'pending', reason: '' },
+          { goal: '', status: 'pending', reason: '' }
+        ]
+      };
+
+      teamData.push(newMember);
+      currentMemberId = newId;
+      closeNewMemberModal();
+      buildProfileDropdown();
+      renderApp();
+      await persistTeamData();
+    }
+
+    // RENDER PRINCIPAL
     function renderApp() {
       const query = (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
 
@@ -665,7 +780,7 @@
       updateStatistics();
     }
 
-    // Render de la Matriz Tipo Excel
+    // Matriz de Control
     function renderMatrix(list) {
       const tbody = document.getElementById('matrixTableBody');
       tbody.innerHTML = '';
@@ -690,17 +805,22 @@
         const tr = document.createElement('tr');
         tr.className = `hover:bg-slate-50/80 transition-colors ${isCurrent ? 'bg-indigo-50/30' : ''}`;
 
-        // Columna Nombre
+        // Columna Nombre con botón directo para editar nombre
         let rowHtml = `
-          <td class="py-3 px-4 border-b border-slate-100 font-semibold text-slate-900 sticky left-0 bg-white z-10">
-            <div class="flex items-center gap-2.5">
-              <span class="w-7 h-7 rounded-lg ${color} text-white font-bold text-xs flex items-center justify-center shrink-0">
-                ${m.name.charAt(0).toUpperCase()}
-              </span>
-              <div>
-                <span class="block font-bold">${m.name}</span>
-                ${isCurrent ? '<span class="text-[9px] bg-indigo-100 text-indigo-700 font-bold px-1.5 py-0.2 rounded">TÚ</span>' : ''}
+          <td class="py-3 px-4 border-b border-slate-100 font-semibold text-slate-900 sticky left-0 bg-white z-10 shadow-sm">
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2.5 overflow-hidden">
+                <span class="w-7 h-7 rounded-lg ${color} text-white font-bold text-xs flex items-center justify-center shrink-0">
+                  ${m.name.charAt(0).toUpperCase()}
+                </span>
+                <div class="truncate">
+                  <span class="block font-bold truncate">${m.name}</span>
+                  ${isCurrent ? '<span class="text-[9px] bg-indigo-100 text-indigo-700 font-bold px-1 py-0.2 rounded">TÚ</span>' : ''}
+                </div>
               </div>
+              <button onclick="openEditMemberNameModal('${m.id}', event)" title="Modificar nombre" class="text-slate-400 hover:text-indigo-600 p-1 transition-colors shrink-0">
+                <i class="fa-solid fa-pen-to-square text-xs"></i>
+              </button>
             </div>
           </td>
         `;
@@ -759,7 +879,7 @@
       });
     }
 
-    // Render del Muro de Transparencia
+    // Muro de Transparencia
     function renderTransparencyWall(list) {
       const container = document.getElementById('transparencyCardsGrid');
       container.innerHTML = '';
@@ -812,9 +932,14 @@
                   <p class="text-[11px] text-slate-400">Compromiso y Objetivos</p>
                 </div>
               </div>
-              <button onclick="openEditModalForMember('${m.id}')" class="text-xs text-indigo-600 hover:text-indigo-800 font-semibold p-1.5 rounded-lg hover:bg-indigo-50">
-                <i class="fa-solid fa-pen-to-square"></i>
-              </button>
+              <div class="flex items-center gap-1">
+                <button onclick="openEditMemberNameModal('${m.id}', event)" title="Modificar nombre" class="text-xs text-slate-400 hover:text-indigo-600 p-1.5 rounded-lg hover:bg-slate-100">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+                <button onclick="openEditModalForMember('${m.id}')" title="Editar metas" class="text-xs text-indigo-600 hover:text-indigo-800 font-semibold p-1.5 rounded-lg hover:bg-indigo-50">
+                  <i class="fa-solid fa-pencil"></i>
+                </button>
+              </div>
             </div>
 
             <div class="space-y-2.5">
@@ -842,7 +967,6 @@
       return `<span class="inline-flex items-center gap-1 text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full"><i class="fa-regular fa-clock"></i> Pendiente</span>`;
     }
 
-    // Estadísticas
     function updateStatistics() {
       let completed = 0;
       let failed = 0;
@@ -866,7 +990,6 @@
       document.getElementById('statRate').innerText = `${rate}%`;
     }
 
-    // Modal de Edición de Futuros
     function buildModalFuturesInputs() {
       const container = document.getElementById('modalFuturesContainer');
       container.innerHTML = '';
@@ -921,12 +1044,10 @@
       document.getElementById('modalMemberName').innerText = member.name;
       document.getElementById('modalAvatarChar').innerText = member.name.charAt(0).toUpperCase();
 
-      // Cargar actividades
       for (let i = 0; i < 4; i++) {
         document.getElementById(`chkAct${i}`).checked = !!member.activities[i];
       }
 
-      // Cargar futuros
       for (let i = 0; i < 5; i++) {
         const fut = member.futures[i] || { goal: '', status: 'pending', reason: '' };
         document.getElementById(`modalGoal_${i}`).value = fut.goal || '';
@@ -951,12 +1072,10 @@
       const member = teamData.find(m => m.id === editingMemberId);
       if (!member) return;
 
-      // Guardar actividades
       for (let i = 0; i < 4; i++) {
         member.activities[i] = document.getElementById(`chkAct${i}`).checked;
       }
 
-      // Guardar futuros
       for (let i = 0; i < 5; i++) {
         const goal = document.getElementById(`modalGoal_${i}`).value.trim();
         const reason = document.getElementById(`modalReason_${i}`).value.trim();
@@ -975,7 +1094,6 @@
       await persistTeamData();
     }
 
-    // Modal de Detalle Rápido de ¿Por qué?
     function showDetailModal(memberId, futureIndex) {
       const member = teamData.find(m => m.id === memberId);
       if (!member) return;
@@ -1012,43 +1130,6 @@
       return 'Pendiente';
     }
 
-    // Modal Agregar Nuevo Integrante
-    function openNewMemberModal() {
-      document.getElementById('newMemberNameInput').value = '';
-      document.getElementById('newMemberModal').classList.remove('hidden');
-    }
-
-    function closeNewMemberModal() {
-      document.getElementById('newMemberModal').classList.add('hidden');
-    }
-
-    async function saveNewMember() {
-      const name = document.getElementById('newMemberNameInput').value.trim();
-      if (!name) return;
-
-      const newId = name.toLowerCase().replace(/\s+/g, '_') + '_' + Date.now();
-      const newMember = {
-        id: newId,
-        name: name,
-        activities: [false, false, false, false],
-        futures: [
-          { goal: '', status: 'pending', reason: '' },
-          { goal: '', status: 'pending', reason: '' },
-          { goal: '', status: 'pending', reason: '' },
-          { goal: '', status: 'pending', reason: '' },
-          { goal: '', status: 'pending', reason: '' }
-        ]
-      };
-
-      teamData.push(newMember);
-      currentMemberId = newId;
-      closeNewMemberModal();
-      buildProfileDropdown();
-      renderApp();
-      await persistTeamData();
-    }
-
-    // Cambio de pestañas
     function switchTab(tab) {
       const matrixCont = document.getElementById('matrixViewContainer');
       const wallCont = document.getElementById('wallViewContainer');
@@ -1068,9 +1149,8 @@
       }
     }
 
-    // Exportación a Excel/CSV
     function exportToCSV() {
-      let csvContent = "\uFEFF"; // UTF-8 BOM para tildes
+      let csvContent = "\uFEFF";
       csvContent += "Integrante,Deja de ser tú,McFarland,Whiplash,Aleta Compensación,1° Futuro,Estado 1,Motivo 1,2° Futuro,Estado 2,Motivo 2,3° Futuro,Estado 3,Motivo 3,4° Futuro,Estado 4,Motivo 4,5° Futuro,Estado 5,Motivo 5\n";
 
       teamData.forEach(m => {
