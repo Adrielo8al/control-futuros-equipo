@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+  
   <script>
     tailwind.config = {
       theme: {
@@ -23,11 +23,16 @@
           },
           colors: {
             navy: {
-              950: '#060b18',
               900: '#0b1329',
               800: '#111c38',
               700: '#1b2a4e',
-              600: '#263b6a'
+              600: '#263b6b',
+            },
+            brand: {
+              gold: '#f59e0b',
+              emerald: '#10b981',
+              rose: '#f43f5e',
+              indigo: '#6366f1'
             }
           }
         }
@@ -35,990 +40,902 @@
     }
   </script>
 
-  <style>
-    /* Scrollbars elegantes */
-    ::-webkit-scrollbar {
-      width: 7px;
-      height: 7px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #f1f5f9;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 9999px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #94a3b8;
-    }
+  <!-- Firebase SDKs Modulares -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
+    import { 
+      getFirestore, 
+      doc, 
+      setDoc, 
+      onSnapshot 
+    } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
-    /* Animación suave para modales y dropdowns */
-    .dropdown-enter {
-      animation: dropdownIn 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    // Configuración oficial de tu proyecto
+    const firebaseConfig = {
+      apiKey: "AIzaSyCkbvZqBS-oNvcrJ2hdpto1QhyuqftClFU",
+      authDomain: "futuro-del-equipo.firebaseapp.com",
+      projectId: "futuro-del-equipo",
+      storageBucket: "futuro-del-equipo.firebasestorage.app",
+      messagingSenderId: "131278208194",
+      appId: "1:131278208194:web:2cc2e70c7b23957d990f5b"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Exportar al ámbito global para uso en la interfaz
+    window.db = db;
+    window.doc = doc;
+    window.setDoc = setDoc;
+    window.onSnapshot = onSnapshot;
+    window.firebaseReady = true;
+
+    // Disparar evento de inicio de base de datos
+    window.dispatchEvent(new Event('firebase-initialized'));
+  </script>
+
+  <style>
+    body {
+      background-color: #f8fafc;
+      color: #1e293b;
     }
-    @keyframes dropdownIn {
-      from {
-        opacity: 0;
-        transform: translateY(-8px) scale(0.98);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
+    .custom-scrollbar::-webkit-scrollbar {
+      height: 7px;
+      width: 7px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
     }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans antialiased selection:bg-indigo-500 selection:text-white">
+<body class="min-h-screen flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
 
-  <!-- ================= Barra Superior / Header ================= -->
-  <header class="bg-navy-900 border-b border-navy-700/60 sticky top-0 z-40 text-white shadow-xl shadow-navy-950/20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-20">
-        
-        <!-- Logotipo / Identidad -->
-        <div class="flex items-center space-x-3.5">
-          <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-500 via-indigo-600 to-amber-400 p-[2px] shadow-lg shadow-indigo-500/25">
-            <div class="w-full h-full bg-navy-900 rounded-[14px] flex items-center justify-center">
-              <i class="fa-solid fa-bullseye text-indigo-400 text-lg"></i>
-            </div>
+  <!-- Header Profesional -->
+  <header class="bg-navy-900 border-b border-navy-700 text-white sticky top-0 z-30 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row items-center justify-between gap-4">
+      
+      <!-- Logo y Título -->
+      <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-amber-400 flex items-center justify-center shadow-md">
+            <i class="fa-solid fa-bullseye text-white text-lg"></i>
           </div>
           <div>
             <div class="flex items-center gap-2">
-              <h1 class="text-lg font-bold tracking-tight text-white">Nexus<span class="text-amber-400">Team</span></h1>
-              <span class="text-[10px] font-bold uppercase tracking-wider bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full">Colaborativo</span>
+              <h1 class="text-lg font-bold tracking-tight text-white">NexusTeam</h1>
+              <span id="syncBadge" class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                Conectando a la nube...
+              </span>
             </div>
-            <p class="text-xs text-slate-400 hidden sm:block">Registro de Actividades, 5 Futuros y Rendición de Cuentas</p>
+            <p class="text-xs text-slate-400">Seguimiento de Futuros, Objetivos y Transparencia Colectiva</p>
           </div>
         </div>
+      </div>
 
-        <!-- Perfil Activo con Menú Personalizado (Sin problemas de contraste de navegador) -->
-        <div class="flex items-center gap-3">
-          
-          <!-- Dropdown Personalizado -->
-          <div class="relative" id="customUserDropdownContainer">
-            <button id="userDropdownTrigger" onclick="toggleUserDropdown()" class="flex items-center gap-3 bg-navy-800 hover:bg-navy-700/80 border-2 border-indigo-500/50 hover:border-indigo-400 rounded-2xl px-3.5 py-2 transition-all shadow-inner group">
-              <div id="headerUserAvatar" class="w-7 h-7 rounded-xl bg-gradient-to-tr from-indigo-500 to-amber-400 p-[2px] shadow flex items-center justify-center text-xs font-black text-navy-900">
-                A
-              </div>
-              <div class="flex flex-col text-left">
-                <span class="text-[9px] uppercase tracking-wider font-extrabold text-amber-300/90 leading-tight">Mi Perfil:</span>
-                <span id="headerUserName" class="text-xs sm:text-sm font-extrabold text-white tracking-wide">Armando</span>
-              </div>
-              <i class="fa-solid fa-chevron-down text-slate-400 group-hover:text-amber-400 text-xs ml-1 transition-transform" id="userDropdownArrow"></i>
-            </button>
-
-            <!-- Lista Desplegable Flotante Premium -->
-            <div id="userDropdownMenu" class="hidden absolute right-0 mt-2 w-64 bg-slate-900 border-2 border-navy-700 rounded-2xl shadow-2xl p-1.5 z-50 dropdown-enter backdrop-blur-md">
-              <div class="px-3 py-2 border-b border-navy-700/80 text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between">
-                <span>Selecciona tu nombre</span>
-                <i class="fa-solid fa-user-check text-amber-400"></i>
-              </div>
-              <div id="customUserList" class="max-h-64 overflow-y-auto py-1 divide-y divide-navy-800/60">
-                <!-- Inyectado por JS con avatares individuales y alto contraste -->
-              </div>
-              <div class="pt-1.5 mt-1 border-t border-navy-700">
-                <button onclick="toggleUserDropdown(); openNewMemberModal();" class="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-amber-400 hover:bg-navy-800 rounded-xl transition">
-                  <i class="fa-solid fa-plus-circle"></i>
-                  <span>Agregar nuevo integrante...</span>
-                </button>
-              </div>
+      <!-- Barra de Perfil e Interacciones -->
+      <div class="flex items-center gap-3 w-full md:w-auto justify-end">
+        
+        <!-- Selector Personalizado de Perfiles -->
+        <div class="relative">
+          <button id="profileDropdownBtn" onclick="toggleProfileDropdown()" class="flex items-center gap-2.5 bg-navy-800 hover:bg-navy-700 text-white border border-navy-600 px-3 py-1.5 rounded-xl text-xs font-semibold shadow-sm transition-all">
+            <span id="currentProfileAvatar" class="w-6 h-6 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-xs">A</span>
+            <div class="text-left">
+              <span class="text-[10px] uppercase tracking-wider text-slate-400 block leading-tight">Mi Perfil</span>
+              <span id="currentProfileName" class="text-white font-bold leading-tight block">Armando</span>
             </div>
-          </div>
-
-          <!-- Botón de apertura de formulario de objetivos -->
-          <button onclick="openEditModal()" class="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-600 text-white text-xs sm:text-sm font-bold px-4 py-2.5 rounded-2xl shadow-md shadow-indigo-600/30 hover:shadow-indigo-600/45 transition-all transform active:scale-95">
-            <i class="fa-solid fa-pen-to-square"></i>
-            <span class="hidden md:inline">Actualizar Mis</span> Futuros
+            <i class="fa-solid fa-chevron-down text-slate-400 text-[10px] ml-1"></i>
           </button>
+
+          <!-- Menú desplegable con alto contraste -->
+          <div id="profileDropdownMenu" class="hidden absolute right-0 mt-2 w-56 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl z-50 py-1.5 overflow-hidden">
+            <div class="px-3 py-1.5 border-b border-slate-800 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+              Seleccionar integrante:
+            </div>
+            <div id="profileListItems" class="max-h-60 overflow-y-auto">
+              <!-- Se inyecta dinámicamente con JavaScript -->
+            </div>
+          </div>
         </div>
 
+        <button onclick="openEditModalForCurrent()" class="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white text-xs font-semibold px-3.5 py-2 rounded-xl shadow-md transition-all active:scale-95">
+          <i class="fa-solid fa-pen-to-square"></i>
+          <span>Editar Mis Futuros</span>
+        </button>
       </div>
     </div>
   </header>
 
-  <!-- ================= Contenedor Principal ================= -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-
-    <!-- Tarjeta de Bienvenida y Resumen del Integrante Seleccionado -->
-    <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-navy-900 via-navy-800 to-indigo-950 p-6 sm:p-8 text-white shadow-xl border border-navy-700/60">
-      <div class="absolute -right-16 -top-16 w-64 h-64 bg-indigo-500/15 rounded-full blur-3xl pointer-events-none"></div>
-      <div class="absolute right-32 -bottom-20 w-56 h-56 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
-
-      <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-        <div class="flex items-start sm:items-center gap-4">
-          <div id="currentUserAvatar" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-amber-500 to-indigo-500 p-[2px] shadow-lg flex-shrink-0">
-            <div class="w-full h-full bg-navy-900 rounded-[14px] flex items-center justify-center text-2xl font-black text-amber-400" id="avatarLetter">
-              A
-            </div>
-          </div>
-          <div>
-            <div class="flex flex-wrap items-center gap-2">
-              <h2 id="currentUserNameHeading" class="text-2xl sm:text-3xl font-extrabold tracking-tight">Armando</h2>
-              <span class="bg-amber-400/20 text-amber-300 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-amber-400/30 flex items-center gap-1.5">
-                <i class="fa-solid fa-shield-halved text-[10px]"></i> Espacio Personal
-              </span>
-            </div>
-            <p id="currentUserSummaryText" class="text-slate-300 text-sm mt-1.5 max-w-2xl leading-relaxed">
-              Tus actividades y los 5 futuros están listos para ser configurados por ti.
-            </p>
-          </div>
-        </div>
-
-        <div class="flex flex-wrap items-center gap-3 pt-3 lg:pt-0 border-t lg:border-t-0 border-navy-700/60">
-          <button onclick="openEditModal()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-navy-950 text-sm font-extrabold px-5 py-3 rounded-2xl transition shadow-lg shadow-amber-500/25">
-            <i class="fa-solid fa-plus-circle"></i>
-            Llenar Mis Objetivos y Causas
-          </button>
-          <button onclick="openDetailModalForUser(currentUserId)" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-navy-700/80 hover:bg-navy-700 text-slate-200 text-sm font-semibold px-4 py-3 rounded-2xl border border-navy-600 transition">
-            <i class="fa-solid fa-eye"></i>
-            Ver Mi Ficha
-          </button>
-        </div>
+  <!-- Banner Informativo del Miembro Activo -->
+  <div class="bg-gradient-to-r from-navy-900 via-navy-800 to-indigo-950 text-white py-4 px-4 border-b border-navy-700">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+      <div class="flex items-center gap-3">
+        <span class="flex h-3 w-3 relative">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+        </span>
+        <p class="text-xs sm:text-sm text-slate-200">
+          Viendo como <strong id="bannerName" class="text-amber-400 font-bold">Armando</strong>. Todos los cambios que guardes se sincronizarán en vivo con todo el equipo.
+        </p>
       </div>
-    </section>
+      <div class="flex items-center gap-2 text-xs">
+        <button onclick="openEditModalForCurrent()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-3 py-1 rounded-lg transition-colors shadow">
+          <i class="fa-solid fa-pencil mr-1"></i> Llenar o Justificar Mis Metas
+        </button>
+      </div>
+    </div>
+  </div>
 
-    <!-- Indicadores Globales de Progreso del Equipo (KPIs) -->
-    <section class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-      
-      <!-- Miembros Activos -->
-      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+  <!-- Contenido Central -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full space-y-6">
+
+    <!-- Tarjetas de Métricas Generales -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
         <div>
-          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Integrantes</span>
-          <p id="kpiTotalMembers" class="text-2xl sm:text-3xl font-black text-navy-900 mt-1">6</p>
-          <span class="text-[11px] text-slate-500 mt-0.5 flex items-center gap-1 font-medium">
-            <i class="fa-solid fa-users text-indigo-500"></i> En el equipo
-          </span>
+          <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Integrantes</p>
+          <h3 id="statTotalMembers" class="text-2xl font-bold text-slate-900 mt-0.5">6</h3>
+          <p class="text-[11px] text-slate-400 mt-0.5">En el equipo activo</p>
         </div>
-        <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-lg">
-          <i class="fa-solid fa-user-group"></i>
+        <div class="w-11 h-11 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-lg">
+          <i class="fa-solid fa-users"></i>
         </div>
       </div>
 
-      <!-- Futuros Cumplidos -->
-      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+      <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
         <div>
-          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Cumplidos</span>
-          <p id="kpiFulfilled" class="text-2xl sm:text-3xl font-black text-emerald-600 mt-1">0</p>
-          <span class="text-[11px] text-emerald-600 mt-0.5 flex items-center gap-1 font-semibold">
-            <i class="fa-solid fa-circle-check"></i> Objetivos logrados
-          </span>
+          <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Cumplidos</p>
+          <h3 id="statCompleted" class="text-2xl font-bold text-emerald-600 mt-0.5">0</h3>
+          <p class="text-[11px] text-emerald-600 font-medium mt-0.5"><i class="fa-solid fa-check-circle"></i> Futuros logrados</p>
         </div>
-        <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg">
-          <i class="fa-solid fa-trophy"></i>
+        <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg">
+          <i class="fa-solid fa-circle-check"></i>
         </div>
       </div>
 
-      <!-- Futuros No Cumplidos -->
-      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+      <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
         <div>
-          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">No Cumplidos</span>
-          <p id="kpiUnfulfilled" class="text-2xl sm:text-3xl font-black text-rose-500 mt-1">0</p>
-          <span class="text-[11px] text-rose-500 mt-0.5 flex items-center gap-1 font-semibold">
-            <i class="fa-solid fa-triangle-exclamation"></i> Con justificación
-          </span>
+          <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">No Cumplidos</p>
+          <h3 id="statFailed" class="text-2xl font-bold text-rose-500 mt-0.5">0</h3>
+          <p class="text-[11px] text-rose-500 font-medium mt-0.5"><i class="fa-solid fa-triangle-exclamation"></i> Con justificación</p>
         </div>
-        <div class="w-12 h-12 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center text-lg">
+        <div class="w-11 h-11 rounded-xl bg-rose-50 text-rose-500 flex items-center justify-center text-lg">
           <i class="fa-solid fa-circle-xmark"></i>
         </div>
       </div>
 
-      <!-- Tasa de Éxito / Rendimiento General -->
-      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+      <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
         <div>
-          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Efectividad</span>
-          <p id="kpiSuccessRate" class="text-2xl sm:text-3xl font-black text-indigo-600 mt-1">0%</p>
-          <span class="text-[11px] text-indigo-600 mt-0.5 flex items-center gap-1 font-semibold">
-            <i class="fa-solid fa-chart-line"></i> Rendimiento actual
-          </span>
+          <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Efectividad</p>
+          <h3 id="statRate" class="text-2xl font-bold text-slate-900 mt-0.5">0%</h3>
+          <p class="text-[11px] text-slate-400 mt-0.5">Tasa global del grupo</p>
         </div>
-        <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-lg">
-          <i class="fa-solid fa-award"></i>
+        <div class="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg">
+          <i class="fa-solid fa-chart-pie"></i>
         </div>
       </div>
+    </div>
 
-    </section>
-
-    <!-- Barra de Filtros, Búsqueda y Navegación de Vistas -->
-    <section class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+    <!-- Barra de Vistas y Controles -->
+    <div class="bg-white p-3 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
       
-      <!-- Pestañas de Vista -->
-      <div class="inline-flex p-1 bg-slate-100 rounded-xl font-semibold text-xs sm:text-sm self-start">
-        <button id="btnTabMatriz" onclick="switchView('matriz')" class="px-4 py-2 rounded-lg bg-white text-navy-900 shadow-sm transition-all flex items-center gap-2 font-bold">
-          <i class="fa-solid fa-table-cells text-indigo-600"></i>
+      <!-- Pestañas -->
+      <div class="flex items-center gap-1.5 p-1 bg-slate-100 rounded-xl w-full sm:w-auto">
+        <button id="tabBtnMatrix" onclick="switchTab('matrix')" class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-white text-navy-900 shadow-sm">
+          <i class="fa-solid fa-table-cells"></i>
           <span>Matriz de Control (Excel)</span>
         </button>
-        <button id="btnTabMuro" onclick="switchView('muro')" class="px-4 py-2 rounded-lg text-slate-600 hover:text-slate-900 transition-all flex items-center gap-2 font-medium">
-          <i class="fa-solid fa-chalkboard-user"></i>
+        <button id="tabBtnWall" onclick="switchTab('wall')" class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:text-navy-900 transition-all">
+          <i class="fa-solid fa-comments"></i>
           <span>Muro de Transparencia</span>
         </button>
       </div>
 
-      <!-- Búsqueda y Filtro por Estado -->
-      <div class="flex flex-wrap items-center gap-3">
-        
-        <div class="relative flex-1 sm:w-64">
-          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-xs"></i>
-          <input type="text" id="searchInput" oninput="renderApp()" placeholder="Buscar integrante u objetivo..." class="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-4 py-2 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
+      <!-- Filtro y Acciones -->
+      <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+        <div class="relative flex-1 sm:flex-none">
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+          <input type="text" id="searchInput" oninput="renderApp()" placeholder="Buscar integrante u objetivo..." class="pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full sm:w-56">
         </div>
 
-        <select id="filterStatus" onchange="renderApp()" class="bg-white text-slate-800 border border-slate-300 rounded-xl px-3 py-2 text-xs sm:text-sm font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500">
-          <option value="TODOS">Todos los Estados</option>
-          <option value="CUMPLIDO">Solo Cumplidos</option>
-          <option value="NO_CUMPLIDO">Solo No Cumplidos</option>
-          <option value="EN_PROGRESO">Solo En Progreso</option>
-          <option value="PENDIENTE">Sin Registrar / Pendientes</option>
-        </select>
-
-        <!-- Botones de Acción Extra -->
-        <button onclick="openNewMemberModal()" class="inline-flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-xl transition">
+        <button onclick="openNewMemberModal()" class="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-3 py-2 rounded-xl transition-colors">
           <i class="fa-solid fa-user-plus text-slate-500"></i>
-          <span class="hidden sm:inline">Nuevo</span> Integrante
+          <span class="hidden md:inline">Nuevo Integrante</span>
         </button>
 
-        <button onclick="exportToCSV()" class="inline-flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs sm:text-sm font-bold px-3.5 py-2 rounded-xl transition">
-          <i class="fa-solid fa-file-excel text-emerald-600"></i>
-          <span>Descargar Excel</span>
+        <button onclick="exportToCSV()" class="flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-semibold px-3 py-2 rounded-xl transition-colors">
+          <i class="fa-solid fa-file-excel"></i>
+          <span class="hidden md:inline">Descargar Excel</span>
         </button>
-
       </div>
-    </section>
+    </div>
 
-    <!-- ================= VISTA 1: MATRIZ DE CONTROL (TABLA TIPO EXCEL) ================= -->
-    <section id="viewMatriz" class="space-y-4">
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse text-xs sm:text-sm">
-            <thead>
-              <tr class="bg-navy-900 text-slate-200 uppercase text-[11px] font-bold tracking-wider">
-                <th class="py-4 px-4 sticky left-0 bg-navy-900 z-20 shadow-md min-w-[160px]">Integrante</th>
-                <th class="py-4 px-3 text-center min-w-[95px]">Deja de ser tú</th>
-                <th class="py-4 px-3 text-center min-w-[95px]">McFarland</th>
-                <th class="py-4 px-3 text-center min-w-[95px]">Whiplash</th>
-                <th class="py-4 px-3 text-center min-w-[110px]">Aleta Compens.</th>
-                <th class="py-4 px-4 min-w-[185px]">1° Futuro</th>
-                <th class="py-4 px-4 min-w-[185px]">2° Futuro</th>
-                <th class="py-4 px-4 min-w-[185px]">3° Futuro</th>
-                <th class="py-4 px-4 min-w-[185px]">4° Futuro</th>
-                <th class="py-4 px-4 min-w-[185px]">5° Futuro</th>
-                <th class="py-4 px-3 text-center min-w-[100px]">Cumplimiento</th>
-                <th class="py-4 px-3 text-center min-w-[85px]">Acción</th>
-              </tr>
-            </thead>
-            <tbody id="matrixTableBody" class="divide-y divide-slate-100 text-slate-700">
-              <!-- Rellenado dinámicamente -->
-            </tbody>
-          </table>
+    <!-- VISTA 1: MATRIZ DE CONTROL (TABLA TIPO EXCEL) -->
+    <div id="matrixViewContainer" class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+      <div class="overflow-x-auto custom-scrollbar">
+        <table class="w-full text-left border-collapse min-w-[1100px]">
+          <thead>
+            <tr class="bg-navy-900 text-white text-[11px] uppercase tracking-wider font-bold">
+              <th class="py-3 px-4 border-b border-navy-800 w-44 sticky left-0 bg-navy-900 z-10">Integrante</th>
+              <th class="py-3 px-3 border-b border-navy-800 text-center w-28">Deja de ser tú</th>
+              <th class="py-3 px-3 border-b border-navy-800 text-center w-28">McFarland</th>
+              <th class="py-3 px-3 border-b border-navy-800 text-center w-28">Whiplash</th>
+              <th class="py-3 px-3 border-b border-navy-800 text-center w-28">Aleta Compens.</th>
+              <th class="py-3 px-3 border-b border-navy-800 text-center w-52">1° Futuro</th>
+              <th class="py-3 px-3 border-b border-navy-800 text-center w-52">2° Futuro</th>
+              <th class="py-3 px-3 border-b border-navy-800 text-center w-52">3° Futuro</th>
+              <th class="py-3 px-3 border-b border-navy-800 text-center w-52">4° Futuro</th>
+              <th class="py-3 px-3 border-b border-navy-800 text-center w-52">5° Futuro</th>
+              <th class="py-3 px-3 border-b border-navy-800 text-center w-28">Cumplidos</th>
+              <th class="py-3 px-3 border-b border-navy-800 text-center w-28">No Cumplidos</th>
+            </tr>
+          </thead>
+          <tbody id="matrixTableBody" class="divide-y divide-slate-100 text-xs">
+            <!-- Filas generadas dinámicamente -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- VISTA 2: MURO DE TRANSPARENCIA Y MOTIVOS -->
+    <div id="wallViewContainer" class="hidden space-y-4">
+      <div class="bg-indigo-50/70 border border-indigo-100 rounded-2xl p-4 text-xs text-indigo-900 flex items-start gap-3">
+        <i class="fa-solid fa-circle-info text-indigo-500 text-base mt-0.5"></i>
+        <div>
+          <p class="font-bold">Muro de Rendición de Cuentas y Aprendizajes</p>
+          <p class="text-indigo-700/80 mt-0.5">Aquí cada integrante puede ver a detalle qué metas se lograron, qué metas quedaron pendientes y, lo más importante, <strong>el motivo real y los obstáculos enfrentados</strong>.</p>
         </div>
       </div>
-    </section>
 
-    <!-- ================= VISTA 2: MURO DE TRANSPARENCIA Y MOTIVOS ================= -->
-    <section id="viewMuro" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <!-- Rellenado dinámicamente -->
-    </section>
+      <div id="transparencyCardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Tarjetas generadas dinámicamente -->
+      </div>
+    </div>
 
   </main>
 
-  <!-- ================= MODAL: ACTUALIZAR MIS OBJETIVOS Y ACTIVIDADES ================= -->
-  <div id="editModal" class="fixed inset-0 z-50 bg-navy-950/75 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 hidden">
-    <div class="bg-white rounded-3xl shadow-2xl border border-slate-200 max-w-3xl w-full max-h-[92vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+  <!-- MODAL: EDITAR / LLENAR FUTUROS Y ACTIVIDADES -->
+  <div id="editModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-100 overflow-hidden transform transition-all">
       
-      <!-- Encabezado de Modal -->
-      <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+      <!-- Cabecera del Modal -->
+      <div class="px-6 py-4 bg-navy-900 text-white flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-lg">
-            <i class="fa-solid fa-list-check"></i>
+          <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center font-bold">
+            <span id="modalAvatarChar">A</span>
           </div>
           <div>
-            <h3 class="text-base sm:text-lg font-extrabold text-navy-900">Actualizar Mis Futuros y Actividades</h3>
-            <p class="text-xs text-slate-500">Editando perfil de: <span id="modalCurrentUserName" class="font-bold text-indigo-600">Armando</span></p>
+            <h3 class="text-sm font-bold tracking-tight">Actualizar Actividades y Futuros</h3>
+            <p class="text-xs text-slate-300">Editando perfil de: <strong id="modalMemberName" class="text-amber-400">Armando</strong></p>
           </div>
         </div>
-        <button onclick="closeEditModal()" class="w-8 h-8 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 flex items-center justify-center transition">
-          <i class="fa-solid fa-xmark text-sm"></i>
+        <button onclick="closeEditModal()" class="text-slate-400 hover:text-white transition-colors text-lg">
+          <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
 
-      <!-- Cuerpo del Formulario con Scroll -->
-      <div class="px-6 py-6 overflow-y-auto space-y-6 flex-1 text-sm">
+      <!-- Cuerpo del Formulario con scroll -->
+      <div class="p-6 overflow-y-auto custom-scrollbar space-y-6">
         
-        <!-- Bloque 1: Actividades Grupales -->
-        <div class="space-y-3">
-          <div class="flex items-center justify-between">
-            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-indigo-600"></span> Actividades de Aprendizaje Grupal
-            </h4>
-            <span class="text-[11px] text-slate-400">Marca las que has realizado</span>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
-            <label class="flex items-center gap-3 p-2.5 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-indigo-300 transition select-none">
-              <input type="checkbox" id="editActLibro" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 border-slate-300">
-              <span class="text-xs font-semibold text-slate-700">Libro: Deja de ser tú</span>
+        <!-- Sección 1: Actividades Grupales -->
+        <div>
+          <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-book-open text-indigo-600"></i>
+            1. Actividades y Materiales Obligatorios
+          </h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <label class="flex items-center justify-between p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer">
+              <span class="text-xs font-medium text-slate-800">Libro: Deja de ser tú</span>
+              <input type="checkbox" id="chkAct0" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500">
             </label>
-
-            <label class="flex items-center gap-3 p-2.5 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-indigo-300 transition select-none">
-              <input type="checkbox" id="editActMcfarland" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 border-slate-300">
-              <span class="text-xs font-semibold text-slate-700">Película: McFarland</span>
+            <label class="flex items-center justify-between p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer">
+              <span class="text-xs font-medium text-slate-800">Película: McFarland</span>
+              <input type="checkbox" id="chkAct1" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500">
             </label>
-
-            <label class="flex items-center gap-3 p-2.5 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-indigo-300 transition select-none">
-              <input type="checkbox" id="editActWhiplash" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 border-slate-300">
-              <span class="text-xs font-semibold text-slate-700">Película: Whiplash</span>
+            <label class="flex items-center justify-between p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer">
+              <span class="text-xs font-medium text-slate-800">Película: Whiplash</span>
+              <input type="checkbox" id="chkAct2" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500">
             </label>
-
-            <label class="flex items-center gap-3 p-2.5 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-indigo-300 transition select-none">
-              <input type="checkbox" id="editActAleta" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 border-slate-300">
-              <span class="text-xs font-semibold text-slate-700">Vídeo: Aleta de Compensación</span>
+            <label class="flex items-center justify-between p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer">
+              <span class="text-xs font-medium text-slate-800">Vídeo: Aleta de Compensación</span>
+              <input type="checkbox" id="chkAct3" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500">
             </label>
           </div>
         </div>
 
-        <!-- Bloque 2: Los 5 Futuros con Motivos Obligatorios -->
-        <div class="space-y-4">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pb-1 border-b border-slate-200">
-            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-amber-500"></span> Los 5 Futuros Personales
+        <hr class="border-slate-100">
+
+        <!-- Sección 2: Los 5 Futuros Individuales y su 'Por qué' -->
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
+              <i class="fa-solid fa-rocket text-indigo-600"></i>
+              2. Mis 5 Futuros (Objetivos y Justificaciones)
             </h4>
-            <span class="text-[11px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full inline-flex items-center gap-1">
-              <i class="fa-solid fa-asterisk text-[9px]"></i> Justifica el porqué de cada uno
+            <span class="text-[11px] text-amber-600 font-medium bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+              * Obligatorio explicar la causa
             </span>
           </div>
 
-          <div id="futurosInputsContainer" class="space-y-4">
-            <!-- 5 tarjetas de futuros insertadas mediante JS -->
+          <div class="space-y-4" id="modalFuturesContainer">
+            <!-- 5 bloques generados por script -->
           </div>
         </div>
 
       </div>
 
       <!-- Pie del Modal -->
-      <div class="px-6 py-4 border-t border-slate-200 bg-slate-50 flex items-center justify-end gap-3">
-        <button onclick="closeEditModal()" class="px-4 py-2 text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-800 rounded-xl hover:bg-slate-200/60 transition">
-          Cancelar
-        </button>
-        <button onclick="saveCurrentUserFuturos()" class="px-5 py-2.5 text-xs sm:text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-md shadow-indigo-600/30 transition flex items-center gap-2">
-          <i class="fa-solid fa-cloud-arrow-up"></i>
-          Guardar Mis Registros
-        </button>
+      <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+        <span class="text-xs text-slate-400">Todos en el equipo podrán leer tus motivos</span>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="closeEditModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-200 rounded-xl transition-colors">
+            Cancelar
+          </button>
+          <button type="button" onclick="saveCurrentMemberData()" class="px-5 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-500 rounded-xl transition-all shadow-md active:scale-95 flex items-center gap-1.5">
+            <i class="fa-solid fa-floppy-disk"></i>
+            <span>Guardar en la Nube</span>
+          </button>
+        </div>
       </div>
 
     </div>
   </div>
 
-  <!-- ================= MODAL: DETALLE / JUSTIFICACIONES ================= -->
-  <div id="detailModal" class="fixed inset-0 z-50 bg-navy-950/75 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 hidden">
-    <div class="bg-white rounded-3xl shadow-2xl border border-slate-200 max-w-2xl w-full max-h-[88vh] flex flex-col overflow-hidden">
-      <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-        <div>
-          <h3 id="detailModalTitle" class="text-base sm:text-lg font-bold text-navy-900">Detalle de Justificación</h3>
-          <p id="detailModalSubtitle" class="text-xs text-slate-500">Transparencia y reflexiones de equipo</p>
+  <!-- MODAL: DETALLE DEL 'POR QUÉ' (CONSULTA RÁPIDA) -->
+  <div id="detailReasonModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-100 overflow-hidden">
+      <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div id="detailStatusIcon" class="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold"></div>
+          <div>
+            <h4 id="detailMemberTitle" class="text-xs font-bold text-slate-800">Objetivo de Integrante</h4>
+            <p id="detailFutureIndex" class="text-[11px] text-slate-400 font-medium">1° Futuro</p>
+          </div>
         </div>
-        <button onclick="closeDetailModal()" class="w-8 h-8 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 flex items-center justify-center transition">
-          <i class="fa-solid fa-xmark text-sm"></i>
+        <button onclick="closeDetailModal()" class="text-slate-400 hover:text-slate-600 text-sm">
+          <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
-      
-      <div id="detailModalContent" class="px-6 py-6 overflow-y-auto space-y-4 text-sm flex-1">
-        <!-- Contenido inyectado dinámicamente -->
+      <div class="p-5 space-y-3">
+        <div>
+          <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Meta establecida:</label>
+          <p id="detailObjectiveText" class="text-xs font-semibold text-slate-800 mt-0.5 bg-slate-50 p-2.5 rounded-xl border border-slate-200/70"></p>
+        </div>
+        <div>
+          <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">¿Por qué se logró o no se logró?:</label>
+          <p id="detailReasonText" class="text-xs text-slate-700 mt-0.5 bg-amber-50/60 text-amber-950 p-3 rounded-xl border border-amber-200/70 whitespace-pre-line leading-relaxed italic"></p>
+        </div>
       </div>
-
-      <div class="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-end">
-        <button onclick="closeDetailModal()" class="px-4 py-2 text-xs sm:text-sm font-semibold text-slate-700 bg-slate-200 hover:bg-slate-300 rounded-xl transition">
+      <div class="px-5 py-3 bg-slate-50 border-t border-slate-100 text-right">
+        <button onclick="closeDetailModal()" class="px-4 py-1.5 text-xs font-semibold bg-white border border-slate-200 rounded-lg text-slate-700 hover:bg-slate-100">
           Cerrar
         </button>
       </div>
     </div>
   </div>
 
-  <!-- ================= MODAL: AGREGAR NUEVO INTEGRANTE ================= -->
-  <div id="newMemberModal" class="fixed inset-0 z-50 bg-navy-950/75 backdrop-blur-sm flex items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-3xl shadow-2xl border border-slate-200 max-w-sm w-full p-6 space-y-4">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold">
-          <i class="fa-solid fa-user-plus"></i>
-        </div>
-        <div>
-          <h3 class="text-base font-bold text-navy-900">Nuevo Integrante</h3>
-          <p class="text-xs text-slate-500">Agrega un nuevo miembro a la plantilla</p>
-        </div>
-      </div>
-
-      <div>
-        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Nombre o Apodo</label>
-        <input type="text" id="newMemberNameInput" placeholder="Ej: Camilo, Valentina..." class="w-full text-sm text-slate-800 bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-      </div>
-
-      <div class="flex items-center justify-end gap-2 pt-2">
-        <button onclick="closeNewMemberModal()" class="px-3.5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl">Cancelar</button>
-        <button onclick="confirmCreateNewMember()" class="px-4 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-md transition">Crear Integrante</button>
+  <!-- MODAL: AGREGAR NUEVO INTEGRANTE -->
+  <div id="newMemberModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-slate-100">
+      <h3 class="text-sm font-bold text-slate-800 mb-1">Agregar Nuevo Integrante</h3>
+      <p class="text-xs text-slate-500 mb-4">Ingresa el nombre del nuevo miembro para registrar sus 5 futuros.</p>
+      <input type="text" id="newMemberNameInput" placeholder="Nombre completo o apodo..." class="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4">
+      <div class="flex items-center justify-end gap-2">
+        <button onclick="closeNewMemberModal()" class="px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg">Cancelar</button>
+        <button onclick="saveNewMember()" class="px-4 py-1.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg shadow">Agregar</button>
       </div>
     </div>
   </div>
 
-  <!-- ================= Notificación Toast ================= -->
-  <div id="toastMessage" class="fixed bottom-5 right-5 z-50 bg-navy-900 text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 transition-all duration-300 transform translate-y-20 opacity-0 pointer-events-none text-xs sm:text-sm border border-navy-700">
-    <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
-    <span id="toastText">Operación realizada con éxito</span>
-  </div>
-
-  <!-- ================= Lógica de Negocio y Persistencia ================= -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-    window.cloudDB = null;
-    window.appId = typeof __app_id !== 'undefined' ? __app_id : 'nexus-team-futuros';
-
-    if (typeof __firebase_config !== 'undefined' && __firebase_config) {
-      try {
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        window.cloudDB = getFirestore(app);
-
-        const authToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-        if (authToken) {
-          await signInWithCustomToken(auth, authToken);
-        } else {
-          await signInAnonymously(auth);
-        }
-
-        const syncDoc = doc(window.cloudDB, 'artifacts', window.appId, 'public', 'data', 'team_records', 'data');
-        onSnapshot(syncDoc, (snap) => {
-          if (snap.exists()) {
-            const remoteData = snap.data();
-            if (remoteData && remoteData.teamMembers) {
-              window.teamMembers = remoteData.teamMembers;
-              window.renderApp();
-            }
-          }
-        }, (err) => {
-          console.warn('Conexión en modo local offline:', err);
-        });
-
-      } catch (err) {
-        console.warn('Operando en modo de persistencia local offline:', err);
-      }
-    }
-  </script>
-
+  <!-- JAVASCRIPT PRINCIPAL Y SINCRONIZACIÓN CLOUD -->
   <script>
-    // Versión 4.0: Resetea cualquier caché o demo previa en navegadores
-    const DATA_SCHEMA_VERSION = 'v4.0_clean_empty_slate';
-    const LOCAL_STORAGE_KEY = 'nexus_team_actividades_data_' + DATA_SCHEMA_VERSION;
-
-    // Paleta de colores distintiva para los avatares
-    const USER_COLORS = {
-      armando: { bg: 'bg-amber-500', text: 'text-navy-900', border: 'border-amber-400' },
-      jesus: { bg: 'bg-emerald-500', text: 'text-white', border: 'border-emerald-400' },
-      jhanet: { bg: 'bg-indigo-500', text: 'text-white', border: 'border-indigo-400' },
-      paito: { bg: 'bg-rose-500', text: 'text-white', border: 'border-rose-400' },
-      patricia: { bg: 'bg-purple-500', text: 'text-white', border: 'border-purple-400' },
-      mateo: { bg: 'bg-cyan-500', text: 'text-navy-900', border: 'border-cyan-400' }
-    };
-
-    // Estructura limpia: TODOS los integrantes inician 100% vacíos sin textos de prueba
-    const CLEAN_MEMBERS = [
+    // Estructura base limpia: Los integrantes inician completamente vacíos para llenado colectivo
+    const INITIAL_TEAM = [
       {
-        id: 'armando',
-        name: 'Armando',
-        activities: { libro: false, mcfarland: false, whiplash: false, aleta: false },
-        futuros: [
-          { num: 1, title: '', status: 'PENDIENTE', why: '' },
-          { num: 2, title: '', status: 'PENDIENTE', why: '' },
-          { num: 3, title: '', status: 'PENDIENTE', why: '' },
-          { num: 4, title: '', status: 'PENDIENTE', why: '' },
-          { num: 5, title: '', status: 'PENDIENTE', why: '' }
+        id: "jesus",
+        name: "Jesús",
+        activities: [false, false, false, false],
+        futures: [
+          { goal: "", status: "pending", reason: "" },
+          { goal: "", status: "pending", reason: "" },
+          { goal: "", status: "pending", reason: "" },
+          { goal: "", status: "pending", reason: "" },
+          { goal: "", status: "pending", reason: "" }
         ]
       },
       {
-        id: 'jesus',
-        name: 'Jesús',
-        activities: { libro: false, mcfarland: false, whiplash: false, aleta: false },
-        futuros: [
-          { num: 1, title: '', status: 'PENDIENTE', why: '' },
-          { num: 2, title: '', status: 'PENDIENTE', why: '' },
-          { num: 3, title: '', status: 'PENDIENTE', why: '' },
-          { num: 4, title: '', status: 'PENDIENTE', why: '' },
-          { num: 5, title: '', status: 'PENDIENTE', why: '' }
+        id: "jhanet",
+        name: "Jhanet",
+        activities: [false, false, false, false],
+        futures: [
+          { goal: "", status: "pending", reason: "" },
+          { goal: "", status: "pending", reason: "" },
+          { goal: "", status: "pending", reason: "" },
+          { goal: "", status: "pending", reason: "" },
+          { goal: "", status: "pending", reason: "" }
         ]
       },
       {
-        id: 'jhanet',
-        name: 'Jhanet',
-        activities: { libro: false, mcfarland: false, whiplash: false, aleta: false },
-        futuros: [
-          { num: 1, title: '', status: 'PENDIENTE', why: '' },
-          { num: 2, title: '', status: 'PENDIENTE', why: '' },
-          { num: 3, title: '', status: 'PENDIENTE', why: '' },
-          { num: 4, title: '', status: 'PENDIENTE', why: '' },
-          { num: 5, title: '', status: 'PENDIENTE', why: '' }
+        id: "paito",
+        name: "Paito",
+        activities: [false, false, false, false],
+        futures: [
+          { goal: "", status: "pending", reason: "" },
+          { goal: "", status: "pending", reason: "" },
+          { goal: "", status: "pending", reason: "" },
+          { goal: "", status: "pending", reason: "" },
+          { goal: "", status: "pending", reason: "" }
         ]
       },
       {
-        id: 'paito',
-        name: 'Paito',
-        activities: { libro: false, mcfarland: false, whiplash: false, aleta: false },
-        futuros: [
-          { num: 1, title: '', status: 'PENDIENTE', why: '' },
-          { num: 2, title: '', status: 'PENDIENTE', why: '' },
-          { num: 3, title: '', status: 'PENDIENTE', why: '' },
-          { num: 4, title: '', status: 'PENDIENTE', why: '' },
-          { num: 5, title: '', status: 'PENDIENTE', why: '' }
+        id: "patricia",
+        name: "Patricia",
+        activities: [false, false, false, false],
+        futures: [
+          { goal: "", status: "pending", reason: "" },
+          { goal: "", status: "pending", reason: "" },
+          { goal: "", status: "pending", reason: "" },
+          { goal: "", status: "pending", reason: "" },
+          { goal: "", status: "pending", reason: "" }
         ]
       },
       {
-        id: 'patricia',
-        name: 'Patricia',
-        activities: { libro: false, mcfarland: false, whiplash: false, aleta: false },
-        futuros: [
-          { num: 1, title: '', status: 'PENDIENTE', why: '' },
-          { num: 2, title: '', status: 'PENDIENTE', why: '' },
-          { num: 3, title: '', status: 'PENDIENTE', why: '' },
-          { num: 4, title: '', status: 'PENDIENTE', why: '' },
-          { num: 5, title: '', status: 'PENDIENTE', why: '' }
+        id: "mateo",
+        name: "Mateo",
+        activities: [false, false, false, false],
+        futures: [
+          { goal: "", status: "pending", reason: "" },
+          { goal: "", status: "pending", reason: "" },
+          { goal: "", status: "pending", reason: "" },
+          { goal: "", status: "pending", reason: "" },
+          { goal: "", status: "pending", reason: "" }
         ]
       },
       {
-        id: 'mateo',
-        name: 'Mateo',
-        activities: { libro: false, mcfarland: false, whiplash: false, aleta: false },
-        futuros: [
-          { num: 1, title: '', status: 'PENDIENTE', why: '' },
-          { num: 2, title: '', status: 'PENDIENTE', why: '' },
-          { num: 3, title: '', status: 'PENDIENTE', why: '' },
-          { num: 4, title: '', status: 'PENDIENTE', why: '' },
-          { num: 5, title: '', status: 'PENDIENTE', why: '' }
+        id: "armando",
+        name: "Armando",
+        activities: [false, false, false, false],
+        futures: [
+          { goal: "", status: "pending", reason: "" },
+          { goal: "", status: "pending", reason: "" },
+          { goal: "", status: "pending", reason: "" },
+          { goal: "", status: "pending", reason: "" },
+          { goal: "", status: "pending", reason: "" }
         ]
       }
     ];
 
-    window.teamMembers = [];
-    window.currentUserId = 'armando';
-    let currentView = 'matriz';
+    let teamData = JSON.parse(JSON.stringify(INITIAL_TEAM));
+    let currentMemberId = "armando";
+    let isCloudConnected = false;
 
-    function initData() {
-      // Elimina de raíz cualquier almacenamiento previo que contenga datos falsos o de prueba
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith('nexus_team_actividades_data_') && key !== LOCAL_STORAGE_KEY) {
-          localStorage.removeItem(key);
-        }
-      }
+    // Colores para avatares
+    const AVATAR_COLORS = [
+      'bg-indigo-600', 'bg-blue-600', 'bg-emerald-600', 
+      'bg-rose-600', 'bg-amber-600', 'bg-teal-600', 'bg-purple-600'
+    ];
 
-      const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
-      if (saved) {
+    // Inicialización del sistema
+    document.addEventListener("DOMContentLoaded", () => {
+      // 1. Cargar almacenamiento local si existe
+      const localData = localStorage.getItem('nexus_team_cloud_cache');
+      if (localData) {
         try {
-          window.teamMembers = JSON.parse(saved);
-        } catch (e) {
-          window.teamMembers = JSON.parse(JSON.stringify(CLEAN_MEMBERS));
-        }
+          teamData = JSON.parse(localData);
+        } catch(e) {}
+      }
+      
+      buildProfileDropdown();
+      renderApp();
+      buildModalFuturesInputs();
+
+      // Escuchar conexión de Firebase
+      if (window.firebaseReady) {
+        initFirebaseSync();
       } else {
-        window.teamMembers = JSON.parse(JSON.stringify(CLEAN_MEMBERS));
-        saveData();
-      }
-    }
-
-    function saveData() {
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(window.teamMembers));
-      syncWithCloud();
-    }
-
-    async function syncWithCloud() {
-      if (window.cloudDB) {
-        try {
-          const { doc, setDoc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
-          const publicDoc = doc(window.cloudDB, 'artifacts', window.appId, 'public', 'data', 'team_records', 'data');
-          await setDoc(publicDoc, { teamMembers: window.teamMembers, schema: DATA_SCHEMA_VERSION, lastUpdate: new Date().toISOString() });
-        } catch (e) {
-          console.warn("Sincronización en la nube en espera:", e);
-        }
-      }
-    }
-
-    function getMemberColor(id) {
-      return USER_COLORS[id] || { bg: 'bg-indigo-600', text: 'text-white', border: 'border-indigo-400' };
-    }
-
-    // Control del Selector Personalizado de Perfiles
-    function toggleUserDropdown() {
-      const menu = document.getElementById('userDropdownMenu');
-      const arrow = document.getElementById('userDropdownArrow');
-      const isHidden = menu.classList.contains('hidden');
-      if (isHidden) {
-        menu.classList.remove('hidden');
-        arrow.style.transform = 'rotate(180deg)';
-      } else {
-        menu.classList.add('hidden');
-        arrow.style.transform = 'rotate(0deg)';
-      }
-    }
-
-    // Cierra el selector al hacer clic fuera
-    document.addEventListener('click', function(e) {
-      const container = document.getElementById('customUserDropdownContainer');
-      if (container && !container.contains(e.target)) {
-        const menu = document.getElementById('userDropdownMenu');
-        const arrow = document.getElementById('userDropdownArrow');
-        if (menu && !menu.classList.contains('hidden')) {
-          menu.classList.add('hidden');
-          arrow.style.transform = 'rotate(0deg)';
-        }
+        window.addEventListener('firebase-initialized', initFirebaseSync);
       }
     });
 
-    function selectUser(userId) {
-      window.currentUserId = userId;
-      toggleUserDropdown();
-      renderApp();
-      showToast(`Perfil cambiado a: ${window.teamMembers.find(m => m.id === userId)?.name}`);
-    }
+    // Conexión y sincronización en tiempo real con Firestore
+    function initFirebaseSync() {
+      const syncBadge = document.getElementById("syncBadge");
+      try {
+        const teamDocRef = window.doc(window.db, "equipos", "nexus_general");
 
-    function switchView(view) {
-      currentView = view;
-      const matrizEl = document.getElementById('viewMatriz');
-      const muroEl = document.getElementById('viewMuro');
-      const btnMatriz = document.getElementById('btnTabMatriz');
-      const btnMuro = document.getElementById('btnTabMuro');
-
-      if (view === 'matriz') {
-        matrizEl.classList.remove('hidden');
-        muroEl.classList.add('hidden');
-        btnMatriz.className = "px-4 py-2 rounded-lg bg-white text-navy-900 shadow-sm transition-all flex items-center gap-2 font-bold";
-        btnMuro.className = "px-4 py-2 rounded-lg text-slate-600 hover:text-slate-900 transition-all flex items-center gap-2 font-medium";
-      } else {
-        matrizEl.classList.add('hidden');
-        muroEl.classList.remove('hidden');
-        btnMuro.className = "px-4 py-2 rounded-lg bg-white text-navy-900 shadow-sm transition-all flex items-center gap-2 font-bold";
-        btnMatriz.className = "px-4 py-2 rounded-lg text-slate-600 hover:text-slate-900 transition-all flex items-center gap-2 font-medium";
-      }
-    }
-
-    function getStatusBadge(status) {
-      switch(status) {
-        case 'CUMPLIDO':
-          return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
-                    <i class="fa-solid fa-check text-[9px]"></i> Cumplido
-                  </span>`;
-        case 'NO_CUMPLIDO':
-          return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-100 text-rose-800 border border-rose-200">
-                    <i class="fa-solid fa-xmark text-[9px]"></i> No Cumplido
-                  </span>`;
-        case 'EN_PROGRESO':
-          return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
-                    <i class="fa-solid fa-clock text-[9px]"></i> En Progreso
-                  </span>`;
-        default:
-          return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-500 border border-slate-200">
-                    <i class="fa-solid fa-circle-dot text-[8px] text-slate-400"></i> Sin Registrar
-                  </span>`;
-      }
-    }
-
-    function renderApp() {
-      const activeUser = window.teamMembers.find(m => m.id === window.currentUserId) || window.teamMembers[0];
-      const activeColor = getMemberColor(activeUser.id);
-
-      // 1. Encabezado de Perfil Activo
-      document.getElementById('headerUserName').textContent = activeUser.name;
-      const headerAvatar = document.getElementById('headerUserAvatar');
-      headerAvatar.className = `w-7 h-7 rounded-xl ${activeColor.bg} ${activeColor.text} font-black text-xs flex items-center justify-center shadow`;
-      headerAvatar.textContent = activeUser.name.charAt(0).toUpperCase();
-
-      // 2. Render de Lista Personalizada de Integrantes (Con alto contraste, avatares y divisores notorios)
-      const customList = document.getElementById('customUserList');
-      customList.innerHTML = window.teamMembers.map(m => {
-        const isSelected = m.id === window.currentUserId;
-        const color = getMemberColor(m.id);
-        return `
-          <button onclick="selectUser('${m.id}')" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all ${isSelected ? 'bg-indigo-600/30 text-white font-extrabold border border-indigo-400/40' : 'text-slate-200 hover:bg-slate-800 hover:text-white font-semibold'}">
-            <div class="flex items-center gap-2.5">
-              <span class="w-7 h-7 rounded-lg ${color.bg} ${color.text} flex items-center justify-center text-xs font-black shadow-sm">
-                ${m.name.charAt(0).toUpperCase()}
-              </span>
-              <span class="text-sm tracking-wide">${m.name}</span>
-            </div>
-            ${isSelected ? '<i class="fa-solid fa-check text-amber-400 text-xs"></i>' : ''}
-          </button>
-        `;
-      }).join('');
-
-      // 3. Banner Principal del Usuario
-      document.getElementById('currentUserNameHeading').textContent = activeUser.name;
-      document.getElementById('avatarLetter').textContent = activeUser.name.charAt(0).toUpperCase();
-
-      const userFilledCount = activeUser.futuros.filter(f => f.title && f.title.trim() !== '').length;
-      const userFulfilled = activeUser.futuros.filter(f => f.status === 'CUMPLIDO').length;
-      const userUnfulfilled = activeUser.futuros.filter(f => f.status === 'NO_CUMPLIDO').length;
-
-      if (userFilledCount === 0) {
-        document.getElementById('currentUserSummaryText').innerHTML = `
-          Tus 5 futuros y reflexiones están vacíos. Haz clic en <strong class="text-amber-400">"Llenar Mis Objetivos y Causas"</strong> para registrar tus metas y actividades de aprendizaje.
-        `;
-      } else {
-        document.getElementById('currentUserSummaryText').innerHTML = `
-          Has registrado <span class="text-amber-400 font-bold">${userFilledCount}</span> de tus 5 futuros (<span class="text-emerald-400 font-bold">${userFulfilled}</span> cumplidos y <span class="text-rose-400 font-bold">${userUnfulfilled}</span> no cumplidos).
-        `;
-      }
-
-      // 4. Métricas / KPIs Globales
-      let totalFuturosDefinidos = 0;
-      let totalFulfilled = 0;
-      let totalUnfulfilled = 0;
-
-      window.teamMembers.forEach(m => {
-        m.futuros.forEach(f => {
-          if (f.title && f.title.trim() !== '') {
-            totalFuturosDefinidos++;
-            if (f.status === 'CUMPLIDO') totalFulfilled++;
-            if (f.status === 'NO_CUMPLIDO') totalUnfulfilled++;
+        // Escuchar cambios en vivo desde Firestore
+        window.onSnapshot(teamDocRef, (docSnap) => {
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            if (data && Array.isArray(data.members)) {
+              teamData = data.members;
+              localStorage.setItem('nexus_team_cloud_cache', JSON.stringify(teamData));
+              renderApp();
+              buildProfileDropdown();
+            }
+          } else {
+            // Si es la primera vez que se crea, subir los integrantes limpios
+            window.setDoc(teamDocRef, { members: teamData }, { merge: true });
           }
+
+          isCloudConnected = true;
+          syncBadge.className = "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+          syncBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Conectado a la nube';
+        }, (error) => {
+          console.warn("Error en sincronización Firestore:", error);
+          syncBadge.className = "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium bg-rose-500/20 text-rose-300 border border-rose-500/30";
+          syncBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span> Modo local (Offline)';
         });
-      });
 
-      document.getElementById('kpiTotalMembers').textContent = window.teamMembers.length;
-      document.getElementById('kpiFulfilled').textContent = totalFulfilled;
-      document.getElementById('kpiUnfulfilled').textContent = totalUnfulfilled;
-      const rate = totalFuturosDefinidos > 0 ? Math.round((totalFulfilled / totalFuturosDefinidos) * 100) : 0;
-      document.getElementById('kpiSuccessRate').textContent = `${rate}%`;
+      } catch (err) {
+        console.error("Fallo inicializando Firebase:", err);
+      }
+    }
 
-      // 5. Filtros y Búsqueda
-      const search = (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
-      const statusFilter = document.getElementById('filterStatus')?.value || 'TODOS';
-
-      const filtered = window.teamMembers.filter(m => {
-        const matchesName = m.name.toLowerCase().includes(search);
-        const matchesFuturo = m.futuros.some(f => (f.title && f.title.toLowerCase().includes(search)) || (f.why && f.why.toLowerCase().includes(search)));
-        if (!matchesName && !matchesFuturo) return false;
-
-        if (statusFilter !== 'TODOS') {
-          if (statusFilter === 'PENDIENTE') {
-            return m.futuros.some(f => !f.title || f.title.trim() === '' || f.status === 'PENDIENTE');
-          }
-          return m.futuros.some(f => f.status === statusFilter);
+    // Guardar datos en la nube y persistir localmente
+    async function persistTeamData() {
+      localStorage.setItem('nexus_team_cloud_cache', JSON.stringify(teamData));
+      if (window.db && window.setDoc && window.doc) {
+        try {
+          const teamDocRef = window.doc(window.db, "equipos", "nexus_general");
+          await window.setDoc(teamDocRef, { members: teamData }, { merge: true });
+        } catch (e) {
+          console.error("Error al guardar en la nube:", e);
         }
-        return true;
+      }
+    }
+
+    // Menú de perfiles de alto contraste
+    function buildProfileDropdown() {
+      const listContainer = document.getElementById('profileListItems');
+      listContainer.innerHTML = '';
+
+      teamData.forEach((m, idx) => {
+        const color = AVATAR_COLORS[idx % AVATAR_COLORS.length];
+        const isCurrent = m.id === currentMemberId;
+
+        const item = document.createElement('button');
+        item.type = 'button';
+        item.onclick = () => selectProfile(m.id);
+        item.className = `w-full text-left px-3 py-2 flex items-center justify-between transition-colors border-b border-slate-800/60 ${isCurrent ? 'bg-indigo-950/80 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}`;
+        
+        item.innerHTML = `
+          <div class="flex items-center gap-2.5">
+            <span class="w-6 h-6 rounded-md ${color} text-white font-bold text-xs flex items-center justify-center">
+              ${m.name.charAt(0).toUpperCase()}
+            </span>
+            <span class="text-xs font-semibold">${m.name}</span>
+          </div>
+          ${isCurrent ? '<i class="fa-solid fa-check text-amber-400 text-xs"></i>' : ''}
+        `;
+        listContainer.appendChild(item);
+      });
+      updateCurrentProfileHeader();
+    }
+
+    function toggleProfileDropdown() {
+      const menu = document.getElementById('profileDropdownMenu');
+      menu.classList.toggle('hidden');
+    }
+
+    // Cerrar menú al hacer clic afuera
+    document.addEventListener('click', (e) => {
+      const btn = document.getElementById('profileDropdownBtn');
+      const menu = document.getElementById('profileDropdownMenu');
+      if (btn && menu && !btn.contains(e.target) && !menu.contains(e.target)) {
+        menu.classList.add('hidden');
+      }
+    });
+
+    function selectProfile(memberId) {
+      currentMemberId = memberId;
+      document.getElementById('profileDropdownMenu').classList.add('hidden');
+      updateCurrentProfileHeader();
+      renderApp();
+    }
+
+    function updateCurrentProfileHeader() {
+      const current = teamData.find(m => m.id === currentMemberId) || teamData[0];
+      if (!current) return;
+      document.getElementById('currentProfileName').innerText = current.name;
+      document.getElementById('currentProfileAvatar').innerText = current.name.charAt(0).toUpperCase();
+      document.getElementById('bannerName').innerText = current.name;
+    }
+
+    // Renderizado general de la tabla y tarjetas
+    function renderApp() {
+      const query = (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
+
+      const filteredTeam = teamData.filter(m => {
+        if (!query) return true;
+        if (m.name.toLowerCase().includes(query)) return true;
+        return m.futures.some(f => f.goal.toLowerCase().includes(query) || f.reason.toLowerCase().includes(query));
       });
 
-      // 6. Matriz de Control (Tabla Excel)
+      renderMatrix(filteredTeam);
+      renderTransparencyWall(filteredTeam);
+      updateStatistics();
+    }
+
+    // Render de la Matriz Tipo Excel
+    function renderMatrix(list) {
       const tbody = document.getElementById('matrixTableBody');
       tbody.innerHTML = '';
 
-      if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="12" class="text-center py-10 text-slate-400 font-medium">No se encontraron integrantes con el filtro seleccionado.</td></tr>`;
-      } else {
-        filtered.forEach(m => {
-          const color = getMemberColor(m.id);
-          const hasData = m.futuros.some(f => f.title && f.title.trim() !== '');
-          const fulfilledCount = m.futuros.filter(f => f.status === 'CUMPLIDO').length;
-          const unfulfilledCount = m.futuros.filter(f => f.status === 'NO_CUMPLIDO').length;
-
-          const tr = document.createElement('tr');
-          tr.className = "hover:bg-slate-50/80 transition-colors border-b border-slate-100";
-
-          const renderActCheck = (val) => val
-            ? `<span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 font-bold text-xs" title="Completado"><i class="fa-solid fa-check"></i></span>`
-            : `<span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 text-slate-400 font-bold text-xs" title="Pendiente"><i class="fa-solid fa-minus"></i></span>`;
-
-          const futurosCols = [1, 2, 3, 4, 5].map(idx => {
-            const fut = m.futuros.find(f => f.num === idx) || { title: '', status: 'PENDIENTE', why: '' };
-            
-            // Si está vacío, muestra botón claro para que el integrante lo registre
-            if (!fut.title || fut.title.trim() === '') {
-              return `
-                <td class="py-3 px-3 max-w-[200px]">
-                  <button onclick="changeCurrentUserAndEdit('${m.id}')" class="w-full text-left p-2 rounded-xl border border-dashed border-slate-300 hover:border-indigo-400 hover:bg-indigo-50/50 transition group">
-                    <span class="block text-[11px] font-bold text-slate-400 group-hover:text-indigo-600 flex items-center gap-1.5">
-                      <i class="fa-solid fa-plus-circle text-xs"></i> ${idx}° Futuro
-                    </span>
-                    <span class="text-[10px] text-slate-400 block mt-0.5 italic">Sin registrar</span>
-                  </button>
-                </td>
-              `;
-            }
-
-            return `
-              <td class="py-3 px-3 max-w-[200px]">
-                <div class="font-bold text-slate-800 truncate text-xs sm:text-sm" title="${fut.title}">${fut.title}</div>
-                <div class="mt-1 flex items-center justify-between gap-1">
-                  ${getStatusBadge(fut.status)}
-                  <button onclick="openSingleFuturoDetail('${m.id}', ${idx})" class="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 underline ml-1" title="Ver Justificación / El Porqué">
-                    ¿Por qué?
-                  </button>
-                </div>
-              </td>
-            `;
-          }).join('');
-
-          tr.innerHTML = `
-            <td class="py-4 px-4 font-bold text-slate-900 sticky left-0 bg-white shadow-sm flex items-center gap-2.5">
-              <div class="w-8 h-8 rounded-xl ${color.bg} ${color.text} flex items-center justify-center font-black text-xs flex-shrink-0 shadow-sm">
-                ${m.name.charAt(0).toUpperCase()}
-              </div>
-              <div class="truncate">
-                <span class="block text-slate-900 font-extrabold">${m.name}</span>
-                ${m.id === window.currentUserId ? '<span class="text-[9px] uppercase font-black text-indigo-700 bg-indigo-50 px-1.5 py-0.2 rounded border border-indigo-200">TÚ</span>' : ''}
-              </div>
-            </td>
-            <td class="py-3 px-3 text-center">${renderActCheck(m.activities.libro)}</td>
-            <td class="py-3 px-3 text-center">${renderActCheck(m.activities.mcfarland)}</td>
-            <td class="py-3 px-3 text-center">${renderActCheck(m.activities.whiplash)}</td>
-            <td class="py-3 px-3 text-center">${renderActCheck(m.activities.aleta)}</td>
-            ${futurosCols}
-            <td class="py-3 px-3 text-center">
-              ${hasData ? `
-                <span class="text-xs font-black text-emerald-600">${fulfilledCount} ✓</span>
-                <span class="text-slate-300 mx-1">|</span>
-                <span class="text-xs font-black text-rose-500">${unfulfilledCount} ✕</span>
-              ` : `
-                <span class="text-[11px] text-slate-400 font-semibold italic">En blanco</span>
-              `}
-            </td>
-            <td class="py-3 px-3 text-center">
-              <button onclick="changeCurrentUserAndEdit('${m.id}')" class="px-2.5 py-1 text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold rounded-lg transition" title="Llenar o editar objetivos">
-                <i class="fa-solid fa-pen-to-square"></i> Llenar
-              </button>
-            </td>
-          `;
-          tbody.appendChild(tr);
-        });
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="12" class="text-center py-8 text-slate-400">No se encontraron integrantes que coincidan con la búsqueda.</td></tr>`;
+        return;
       }
 
-      // 7. Muro de Transparencia
-      const muroContainer = document.getElementById('viewMuro');
-      muroContainer.innerHTML = '';
+      list.forEach((m, idx) => {
+        const isCurrent = m.id === currentMemberId;
+        const color = AVATAR_COLORS[idx % AVATAR_COLORS.length];
 
-      filtered.forEach(m => {
-        const color = getMemberColor(m.id);
-        const card = document.createElement('div');
-        card.className = "bg-white rounded-3xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow";
+        let completedCount = 0;
+        let failedCount = 0;
 
-        const hasFuturos = m.futuros.some(f => f.title && f.title.trim() !== '');
+        m.futures.forEach(f => {
+          if (f.status === 'completed') completedCount++;
+          if (f.status === 'failed') failedCount++;
+        });
 
-        let itemsHtml = '';
-        if (!hasFuturos) {
-          itemsHtml = `
-            <div class="p-6 rounded-2xl border-2 border-dashed border-slate-200 text-center space-y-3 bg-slate-50/50">
-              <div class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto text-sm">
-                <i class="fa-solid fa-pen-nib"></i>
+        const tr = document.createElement('tr');
+        tr.className = `hover:bg-slate-50/80 transition-colors ${isCurrent ? 'bg-indigo-50/30' : ''}`;
+
+        // Columna Nombre
+        let rowHtml = `
+          <td class="py-3 px-4 border-b border-slate-100 font-semibold text-slate-900 sticky left-0 bg-white z-10">
+            <div class="flex items-center gap-2.5">
+              <span class="w-7 h-7 rounded-lg ${color} text-white font-bold text-xs flex items-center justify-center shrink-0">
+                ${m.name.charAt(0).toUpperCase()}
+              </span>
+              <div>
+                <span class="block font-bold">${m.name}</span>
+                ${isCurrent ? '<span class="text-[9px] bg-indigo-100 text-indigo-700 font-bold px-1.5 py-0.2 rounded">TÚ</span>' : ''}
               </div>
-              <p class="text-xs text-slate-500 font-medium">Este integrante aún no ha ingresado sus metas ni explicaciones.</p>
-              <button onclick="changeCurrentUserAndEdit('${m.id}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition shadow-sm">
-                <i class="fa-solid fa-plus-circle"></i> Registrar mis objetivos
-              </button>
             </div>
+          </td>
+        `;
+
+        // 4 Actividades
+        for (let i = 0; i < 4; i++) {
+          const done = m.activities[i];
+          rowHtml += `
+            <td class="py-3 px-3 border-b border-slate-100 text-center">
+              ${done 
+                ? '<span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 inline-flex items-center justify-center text-xs"><i class="fa-solid fa-check"></i></span>'
+                : '<span class="w-6 h-6 rounded-full bg-slate-100 text-slate-300 inline-flex items-center justify-center text-xs"><i class="fa-solid fa-minus"></i></span>'
+              }
+            </td>
           `;
-        } else {
-          itemsHtml = m.futuros.map(f => {
-            if (!f.title || f.title.trim() === '') return '';
-            let borderTheme = f.status === 'CUMPLIDO' ? 'border-emerald-200 bg-emerald-50/50' : (f.status === 'NO_CUMPLIDO' ? 'border-rose-200 bg-rose-50/50' : 'border-amber-200 bg-amber-50/50');
-            return `
-              <div class="p-3.5 rounded-2xl border ${borderTheme} space-y-2">
-                <div class="flex items-center justify-between gap-2">
-                  <span class="text-xs font-black text-navy-900">${f.num}° Futuro: ${f.title}</span>
-                  ${getStatusBadge(f.status)}
-                </div>
-                <div class="bg-white/95 p-3 rounded-xl border border-slate-200 text-xs shadow-sm">
-                  <strong class="text-slate-800 text-[11px] uppercase tracking-wider block mb-1 flex items-center gap-1 font-bold">
-                    <i class="fa-solid fa-comment-dots text-indigo-600"></i> ¿Por qué se cumplió o no?
-                  </strong>
-                  <p class="italic text-slate-700 leading-relaxed font-medium">${f.why ? f.why : 'Sin justificación detallada.'}</p>
-                </div>
-              </div>
-            `;
-          }).join('');
         }
 
-        card.innerHTML = `
-          <div class="space-y-5">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
-              <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-2xl ${color.bg} ${color.text} font-black text-lg flex items-center justify-center shadow-md">
-                  ${m.name.charAt(0).toUpperCase()}
+        // 5 Futuros
+        for (let i = 0; i < 5; i++) {
+          const fut = m.futures[i];
+          const hasGoal = fut && fut.goal.trim() !== '';
+
+          rowHtml += `
+            <td class="py-2.5 px-3 border-b border-slate-100 align-top">
+              ${hasGoal ? `
+                <div class="space-y-1">
+                  <p class="font-medium text-slate-800 line-clamp-2 leading-snug">${fut.goal}</p>
+                  <div class="flex items-center justify-between gap-1">
+                    ${getStatusBadge(fut.status)}
+                    <button onclick="showDetailModal('${m.id}', ${i})" class="text-[10px] text-indigo-600 hover:text-indigo-800 font-semibold underline shrink-0">
+                      ¿Por qué?
+                    </button>
+                  </div>
                 </div>
-                <div>
-                  <h3 class="font-extrabold text-navy-900 text-base leading-tight">${m.name}</h3>
-                  <p class="text-xs text-slate-500 font-semibold mt-0.5">
-                    ${hasFuturos ? `Libro: ${m.activities.libro ? '✓' : '✕'} • Películas: ${m.activities.mcfarland && m.activities.whiplash ? '2/2' : (m.activities.mcfarland || m.activities.whiplash ? '1/2' : '0/2')}` : 'Sin actividades registradas'}
-                  </p>
-                </div>
-              </div>
+              ` : `
+                <button onclick="openEditModalForMember('${m.id}')" class="w-full py-1.5 border border-dashed border-slate-200 hover:border-indigo-400 rounded-lg text-[11px] text-slate-400 hover:text-indigo-600 transition-colors flex items-center justify-center gap-1">
+                  <i class="fa-solid fa-plus text-[9px]"></i> Registrar
+                </button>
+              `}
+            </td>
+          `;
+        }
 
-              <button onclick="changeCurrentUserAndEdit('${m.id}')" class="text-xs font-bold bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-3 py-1.5 rounded-xl transition">
-                <i class="fa-solid fa-pen-to-square"></i> Llenar
-              </button>
-            </div>
-
-            <div class="space-y-3">
-              ${itemsHtml}
-            </div>
-          </div>
-
-          <div class="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-medium">
-            <span>Rendimiento</span>
-            <span class="font-black text-navy-900">${hasFuturos ? `${m.futuros.filter(f => f.status === 'CUMPLIDO').length} de 5 cumplidos` : 'Pendiente'}</span>
-          </div>
+        // Totales Cumplidos y No Cumplidos
+        rowHtml += `
+          <td class="py-3 px-3 border-b border-slate-100 text-center font-bold text-emerald-600 bg-emerald-50/20">
+            ${completedCount}
+          </td>
+          <td class="py-3 px-3 border-b border-slate-100 text-center font-bold text-rose-500 bg-rose-50/20">
+            ${failedCount}
+          </td>
         `;
-        muroContainer.appendChild(card);
+
+        tr.innerHTML = rowHtml;
+        tbody.appendChild(tr);
       });
     }
 
-    function changeCurrentUserAndEdit(userId) {
-      window.currentUserId = userId;
-      renderApp();
-      openEditModal();
-    }
-
-    // Modal de Edición del Usuario Actual
-    function openEditModal() {
-      const user = window.teamMembers.find(m => m.id === window.currentUserId);
-      if (!user) return;
-
-      document.getElementById('modalCurrentUserName').textContent = user.name;
-      document.getElementById('editActLibro').checked = !!user.activities.libro;
-      document.getElementById('editActMcfarland').checked = !!user.activities.mcfarland;
-      document.getElementById('editActWhiplash').checked = !!user.activities.whiplash;
-      document.getElementById('editActAleta').checked = !!user.activities.aleta;
-
-      const container = document.getElementById('futurosInputsContainer');
+    // Render del Muro de Transparencia
+    function renderTransparencyWall(list) {
+      const container = document.getElementById('transparencyCardsGrid');
       container.innerHTML = '';
 
-      for (let i = 1; i <= 5; i++) {
-        const fut = user.futuros.find(f => f.num === i) || { num: i, title: '', status: 'PENDIENTE', why: '' };
-        const div = document.createElement('div');
-        div.className = "bg-slate-50 border border-slate-200 p-4 rounded-2xl space-y-3";
-        div.innerHTML = `
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <span class="text-xs font-extrabold text-navy-900 uppercase tracking-wider flex items-center gap-1.5">
-              <i class="fa-solid fa-flag text-amber-500"></i> Futuro #${i}
+      list.forEach((m, idx) => {
+        const color = AVATAR_COLORS[idx % AVATAR_COLORS.length];
+        const hasAnyGoal = m.futures.some(f => f.goal.trim() !== '');
+
+        const card = document.createElement('div');
+        card.className = "bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 space-y-4 flex flex-col justify-between";
+
+        let futuresHtml = '';
+
+        if (!hasAnyGoal) {
+          futuresHtml = `
+            <div class="py-6 text-center text-slate-400 text-xs italic bg-slate-50 rounded-xl border border-dashed border-slate-200">
+              Este integrante aún no ha registrado sus 5 futuros.
+            </div>
+          `;
+        } else {
+          m.futures.forEach((f, fIdx) => {
+            if (f.goal.trim() === '') return;
+            futuresHtml += `
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 space-y-2">
+                <div class="flex items-start justify-between gap-2">
+                  <span class="text-[11px] font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded">Futuro ${fIdx + 1}</span>
+                  ${getStatusBadge(f.status)}
+                </div>
+                <p class="text-xs font-semibold text-slate-800 leading-snug">${f.goal}</p>
+                <div class="pt-1.5 border-t border-slate-200/60">
+                  <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wide block">Motivo / Causa:</span>
+                  <p class="text-xs text-slate-600 italic mt-0.5 whitespace-pre-line leading-relaxed">
+                    ${f.reason.trim() ? f.reason : '<span class="text-slate-400 not-italic">Sin justificación agregada</span>'}
+                  </p>
+                </div>
+              </div>
+            `;
+          });
+        }
+
+        card.innerHTML = `
+          <div class="space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div class="flex items-center gap-2.5">
+                <span class="w-9 h-9 rounded-xl ${color} text-white font-bold text-sm flex items-center justify-center">
+                  ${m.name.charAt(0).toUpperCase()}
+                </span>
+                <div>
+                  <h4 class="text-sm font-bold text-slate-900 leading-tight">${m.name}</h4>
+                  <p class="text-[11px] text-slate-400">Compromiso y Objetivos</p>
+                </div>
+              </div>
+              <button onclick="openEditModalForMember('${m.id}')" class="text-xs text-indigo-600 hover:text-indigo-800 font-semibold p-1.5 rounded-lg hover:bg-indigo-50">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </button>
+            </div>
+
+            <div class="space-y-2.5">
+              ${futuresHtml}
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400 font-medium">
+            <span>Actividades listas: ${m.activities.filter(Boolean).length}/4</span>
+            <span class="text-indigo-600 font-semibold cursor-pointer" onclick="openEditModalForMember('${m.id}')">Editar metas &rarr;</span>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    function getStatusBadge(status) {
+      if (status === 'completed') {
+        return `<span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full"><i class="fa-solid fa-check"></i> Cumplido</span>`;
+      }
+      if (status === 'failed') {
+        return `<span class="inline-flex items-center gap-1 text-[10px] font-bold text-rose-700 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-full"><i class="fa-solid fa-xmark"></i> No Cumplido</span>`;
+      }
+      return `<span class="inline-flex items-center gap-1 text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full"><i class="fa-regular fa-clock"></i> Pendiente</span>`;
+    }
+
+    // Estadísticas
+    function updateStatistics() {
+      let completed = 0;
+      let failed = 0;
+      let totalWithGoal = 0;
+
+      teamData.forEach(m => {
+        m.futures.forEach(f => {
+          if (f.goal.trim() !== '') {
+            totalWithGoal++;
+            if (f.status === 'completed') completed++;
+            if (f.status === 'failed') failed++;
+          }
+        });
+      });
+
+      document.getElementById('statTotalMembers').innerText = teamData.length;
+      document.getElementById('statCompleted').innerText = completed;
+      document.getElementById('statFailed').innerText = failed;
+      
+      const rate = totalWithGoal > 0 ? Math.round((completed / totalWithGoal) * 100) : 0;
+      document.getElementById('statRate').innerText = `${rate}%`;
+    }
+
+    // Modal de Edición de Futuros
+    function buildModalFuturesInputs() {
+      const container = document.getElementById('modalFuturesContainer');
+      container.innerHTML = '';
+
+      for (let i = 0; i < 5; i++) {
+        const item = document.createElement('div');
+        item.className = "p-3.5 rounded-xl border border-slate-200 bg-slate-50/50 space-y-2.5";
+        item.innerHTML = `
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-xs font-bold text-indigo-900 bg-indigo-50 border border-indigo-200/60 px-2 py-0.5 rounded-lg">
+              ${i + 1}° Futuro
             </span>
-            <div class="flex items-center gap-2">
-              <span class="text-xs font-bold text-slate-700">Estado:</span>
-              <select id="inputFuturoStatus_${i}" class="text-xs font-bold text-slate-900 border border-slate-300 rounded-xl px-2.5 py-1.5 bg-white focus:ring-2 focus:ring-indigo-500">
-                <option value="PENDIENTE" ${fut.status === 'PENDIENTE' ? 'selected' : ''}>Sin Definir / Pendiente</option>
-                <option value="EN_PROGRESO" ${fut.status === 'EN_PROGRESO' ? 'selected' : ''}>En Progreso</option>
-                <option value="CUMPLIDO" ${fut.status === 'CUMPLIDO' ? 'selected' : ''}>Cumplido</option>
-                <option value="NO_CUMPLIDO" ${fut.status === 'NO_CUMPLIDO' ? 'selected' : ''}>No Cumplido</option>
-              </select>
+            <div class="flex items-center gap-1.5 text-xs">
+              <label class="cursor-pointer">
+                <input type="radio" name="modalStatus_${i}" value="pending" class="peer sr-only" checked>
+                <span class="px-2.5 py-1 rounded-lg border border-slate-300 text-slate-600 peer-checked:bg-amber-500 peer-checked:border-amber-500 peer-checked:text-white transition-all text-[11px] font-semibold">Pendiente</span>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="modalStatus_${i}" value="completed" class="peer sr-only">
+                <span class="px-2.5 py-1 rounded-lg border border-slate-300 text-slate-600 peer-checked:bg-emerald-600 peer-checked:border-emerald-600 peer-checked:text-white transition-all text-[11px] font-semibold">Cumplido</span>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="modalStatus_${i}" value="failed" class="peer sr-only">
+                <span class="px-2.5 py-1 rounded-lg border border-slate-300 text-slate-600 peer-checked:bg-rose-600 peer-checked:border-rose-600 peer-checked:text-white transition-all text-[11px] font-semibold">No Cumplido</span>
+              </label>
             </div>
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Título del Futuro / Meta personal:</label>
-            <input type="text" id="inputFuturoTitle_${i}" value="${fut.title || ''}" placeholder="Escribe aquí tu meta #${i}..." class="w-full text-xs sm:text-sm text-slate-800 px-3.5 py-2 border border-slate-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 font-semibold">
+            <input type="text" id="modalGoal_${i}" placeholder="Escribe aquí el objetivo (ej. Viaje, Curso, Certificación...)" class="w-full text-xs p-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium">
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center justify-between">
-              <span>¿Por qué se cumplió o no? (Causas, aprendizajes o motivos):</span>
-              <span class="text-[11px] text-indigo-700 font-bold">Importante</span>
-            </label>
-            <textarea id="inputFuturoWhy_${i}" rows="2" placeholder="Explica qué te permitió lograrlo o qué imprevistos te impidieron cumplirlo..." class="w-full text-xs sm:text-sm text-slate-800 p-3 border border-slate-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium">${fut.why || ''}</textarea>
+            <textarea id="modalReason_${i}" rows="2" placeholder="Explica el ¿Por qué?: ¿Qué te ayudó a cumplirlo o qué obstáculo impidió lograrlo?" class="w-full text-xs p-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder:italic"></textarea>
           </div>
         `;
-        container.appendChild(div);
+        container.appendChild(item);
+      }
+    }
+
+    let editingMemberId = null;
+
+    function openEditModalForCurrent() {
+      openEditModalForMember(currentMemberId);
+    }
+
+    function openEditModalForMember(memberId) {
+      editingMemberId = memberId;
+      const member = teamData.find(m => m.id === memberId);
+      if (!member) return;
+
+      document.getElementById('modalMemberName').innerText = member.name;
+      document.getElementById('modalAvatarChar').innerText = member.name.charAt(0).toUpperCase();
+
+      // Cargar actividades
+      for (let i = 0; i < 4; i++) {
+        document.getElementById(`chkAct${i}`).checked = !!member.activities[i];
+      }
+
+      // Cargar futuros
+      for (let i = 0; i < 5; i++) {
+        const fut = member.futures[i] || { goal: '', status: 'pending', reason: '' };
+        document.getElementById(`modalGoal_${i}`).value = fut.goal || '';
+        document.getElementById(`modalReason_${i}`).value = fut.reason || '';
+
+        const radios = document.getElementsByName(`modalStatus_${i}`);
+        for (const r of radios) {
+          r.checked = (r.value === fut.status);
+        }
       }
 
       document.getElementById('editModal').classList.remove('hidden');
@@ -1026,206 +943,158 @@
 
     function closeEditModal() {
       document.getElementById('editModal').classList.add('hidden');
+      editingMemberId = null;
     }
 
-    function saveCurrentUserFuturos() {
-      const user = window.teamMembers.find(m => m.id === window.currentUserId);
-      if (!user) return;
-
-      user.activities.libro = document.getElementById('editActLibro').checked;
-      user.activities.mcfarland = document.getElementById('editActMcfarland').checked;
-      user.activities.whiplash = document.getElementById('editActWhiplash').checked;
-      user.activities.aleta = document.getElementById('editActAleta').checked;
-
-      const updatedFuturos = [];
-      for (let i = 1; i <= 5; i++) {
-        const title = document.getElementById(`inputFuturoTitle_${i}`).value.trim();
-        const status = document.getElementById(`inputFuturoStatus_${i}`).value;
-        const why = document.getElementById(`inputFuturoWhy_${i}`).value.trim();
-
-        updatedFuturos.push({
-          num: i,
-          title: title,
-          status: status,
-          why: why
-        });
-      }
-      user.futuros = updatedFuturos;
-
-      saveData();
-      renderApp();
-      closeEditModal();
-      showToast('Tus objetivos y reflexiones se han guardado con éxito.');
-    }
-
-    // Modal de Detalles Individuales
-    function openSingleFuturoDetail(memberId, num) {
-      const member = window.teamMembers.find(m => m.id === memberId);
+    async function saveCurrentMemberData() {
+      if (!editingMemberId) return;
+      const member = teamData.find(m => m.id === editingMemberId);
       if (!member) return;
-      const fut = member.futuros.find(f => f.num === num);
+
+      // Guardar actividades
+      for (let i = 0; i < 4; i++) {
+        member.activities[i] = document.getElementById(`chkAct${i}`).checked;
+      }
+
+      // Guardar futuros
+      for (let i = 0; i < 5; i++) {
+        const goal = document.getElementById(`modalGoal_${i}`).value.trim();
+        const reason = document.getElementById(`modalReason_${i}`).value.trim();
+        
+        let status = 'pending';
+        const radios = document.getElementsByName(`modalStatus_${i}`);
+        for (const r of radios) {
+          if (r.checked) status = r.value;
+        }
+
+        member.futures[i] = { goal, status, reason };
+      }
+
+      closeEditModal();
+      renderApp();
+      await persistTeamData();
+    }
+
+    // Modal de Detalle Rápido de ¿Por qué?
+    function showDetailModal(memberId, futureIndex) {
+      const member = teamData.find(m => m.id === memberId);
+      if (!member) return;
+      const fut = member.futures[futureIndex];
       if (!fut) return;
 
-      document.getElementById('detailModalTitle').textContent = `${member.name} — ${fut.num}° Futuro: ${fut.title}`;
-      document.getElementById('detailModalSubtitle').textContent = "Justificación transparente compartida con el equipo";
+      document.getElementById('detailMemberTitle').innerText = `${member.name}`;
+      document.getElementById('detailFutureIndex').innerText = `${futureIndex + 1}° Futuro (${getStatusLabel(fut.status)})`;
+      document.getElementById('detailObjectiveText').innerText = fut.goal || 'Sin objetivo establecido';
+      document.getElementById('detailReasonText').innerText = fut.reason.trim() ? fut.reason : 'No se ha redactado una explicación para este futuro.';
 
-      const content = document.getElementById('detailModalContent');
-      content.innerHTML = `
-        <div class="space-y-4">
-          <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-200">
-            <div>
-              <span class="text-xs uppercase font-bold text-slate-400">Estado</span>
-              <div class="mt-1">${getStatusBadge(fut.status)}</div>
-            </div>
-            <div class="text-right">
-              <span class="text-xs uppercase font-bold text-slate-400">Integrante</span>
-              <p class="font-extrabold text-navy-900">${member.name}</p>
-            </div>
-          </div>
+      const iconBox = document.getElementById('detailStatusIcon');
+      if (fut.status === 'completed') {
+        iconBox.className = "w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs";
+        iconBox.innerHTML = '<i class="fa-solid fa-check"></i>';
+      } else if (fut.status === 'failed') {
+        iconBox.className = "w-7 h-7 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center text-xs";
+        iconBox.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+      } else {
+        iconBox.className = "w-7 h-7 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center text-xs";
+        iconBox.innerHTML = '<i class="fa-regular fa-clock"></i>';
+      }
 
-          <div class="p-5 rounded-2xl border border-indigo-100 bg-indigo-50/50">
-            <h4 class="text-xs font-bold uppercase tracking-wider text-indigo-900 mb-2 flex items-center gap-1.5">
-              <i class="fa-solid fa-quote-left text-indigo-600"></i> ¿Por qué se cumplió o no? (Motivos y Lecciones):
-            </h4>
-            <p class="text-slate-800 text-sm leading-relaxed italic font-medium whitespace-pre-wrap">${fut.why ? fut.why : 'Sin justificación detallada todavía.'}</p>
-          </div>
-        </div>
-      `;
-      document.getElementById('detailModal').classList.remove('hidden');
-    }
-
-    function openDetailModalForUser(memberId) {
-      const member = window.teamMembers.find(m => m.id === memberId);
-      if (!member) return;
-
-      document.getElementById('detailModalTitle').textContent = `Ficha Completa de ${member.name}`;
-      document.getElementById('detailModalSubtitle').textContent = "Todos los compromisos, estados y justificaciones";
-
-      const content = document.getElementById('detailModalContent');
-      const itemsHtml = member.futuros.map(f => `
-        <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
-          <div class="flex items-center justify-between">
-            <h5 class="font-extrabold text-navy-900 text-sm">${f.num}° Futuro: ${f.title || '<span class="text-slate-400 italic">Sin título</span>'}</h5>
-            ${getStatusBadge(f.status)}
-          </div>
-          <div class="bg-white p-3 rounded-xl border border-slate-200 text-xs">
-            <strong class="text-slate-700 block text-[11px] uppercase mb-1 font-bold">¿Por qué?:</strong>
-            <p class="italic text-slate-800 leading-relaxed font-medium">${f.why ? f.why : 'Sin justificación registrada.'}</p>
-          </div>
-        </div>
-      `).join('');
-
-      content.innerHTML = `
-        <div class="space-y-4">
-          <div class="p-4 bg-navy-900 text-white rounded-2xl flex items-center justify-between">
-            <div>
-              <p class="text-xs uppercase font-bold text-slate-400">Actividades formativas</p>
-              <p class="text-xs mt-1 font-medium">Libro: ${member.activities.libro ? '✓' : '✕'} | McFarland: ${member.activities.mcfarland ? '✓' : '✕'} | Whiplash: ${member.activities.whiplash ? '✓' : '✕'} | Aleta: ${member.activities.aleta ? '✓' : '✕'}</p>
-            </div>
-            <div class="text-right">
-              <p class="text-xs uppercase font-bold text-slate-400">Cumplimiento</p>
-              <p class="text-base font-black text-amber-400">${member.futuros.filter(f => f.status === 'CUMPLIDO').length} de 5</p>
-            </div>
-          </div>
-          ${itemsHtml}
-        </div>
-      `;
-      document.getElementById('detailModal').classList.remove('hidden');
+      document.getElementById('detailReasonModal').classList.remove('hidden');
     }
 
     function closeDetailModal() {
-      document.getElementById('detailModal').classList.add('hidden');
+      document.getElementById('detailReasonModal').classList.add('hidden');
     }
 
-    // Modal para Nuevo Integrante
+    function getStatusLabel(st) {
+      if (st === 'completed') return 'Cumplido';
+      if (st === 'failed') return 'No Cumplido';
+      return 'Pendiente';
+    }
+
+    // Modal Agregar Nuevo Integrante
     function openNewMemberModal() {
       document.getElementById('newMemberNameInput').value = '';
       document.getElementById('newMemberModal').classList.remove('hidden');
-      document.getElementById('newMemberNameInput').focus();
     }
 
     function closeNewMemberModal() {
       document.getElementById('newMemberModal').classList.add('hidden');
     }
 
-    function confirmCreateNewMember() {
+    async function saveNewMember() {
       const name = document.getElementById('newMemberNameInput').value.trim();
       if (!name) return;
 
-      const newId = name.toLowerCase().replace(/[^a-z0-9]/g, '_') + '_' + Date.now().toString().slice(-4);
+      const newId = name.toLowerCase().replace(/\s+/g, '_') + '_' + Date.now();
       const newMember = {
         id: newId,
         name: name,
-        activities: { libro: false, mcfarland: false, whiplash: false, aleta: false },
-        futuros: [
-          { num: 1, title: '', status: 'PENDIENTE', why: '' },
-          { num: 2, title: '', status: 'PENDIENTE', why: '' },
-          { num: 3, title: '', status: 'PENDIENTE', why: '' },
-          { num: 4, title: '', status: 'PENDIENTE', why: '' },
-          { num: 5, title: '', status: 'PENDIENTE', why: '' }
+        activities: [false, false, false, false],
+        futures: [
+          { goal: '', status: 'pending', reason: '' },
+          { goal: '', status: 'pending', reason: '' },
+          { goal: '', status: 'pending', reason: '' },
+          { goal: '', status: 'pending', reason: '' },
+          { goal: '', status: 'pending', reason: '' }
         ]
       };
 
-      window.teamMembers.push(newMember);
-      window.currentUserId = newId;
-      saveData();
-      renderApp();
+      teamData.push(newMember);
+      currentMemberId = newId;
       closeNewMemberModal();
-      showToast(`Integrante ${name} creado con éxito.`);
+      buildProfileDropdown();
+      renderApp();
+      await persistTeamData();
     }
 
-    // Exportación a formato Excel (CSV con soporte de tildes UTF-8)
+    // Cambio de pestañas
+    function switchTab(tab) {
+      const matrixCont = document.getElementById('matrixViewContainer');
+      const wallCont = document.getElementById('wallViewContainer');
+      const btnMatrix = document.getElementById('tabBtnMatrix');
+      const btnWall = document.getElementById('tabBtnWall');
+
+      if (tab === 'matrix') {
+        matrixCont.classList.remove('hidden');
+        wallCont.classList.add('hidden');
+        btnMatrix.className = "flex-1 sm:flex-none flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-white text-navy-900 shadow-sm";
+        btnWall.className = "flex-1 sm:flex-none flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:text-navy-900 transition-all";
+      } else {
+        matrixCont.classList.add('hidden');
+        wallCont.classList.remove('hidden');
+        btnWall.className = "flex-1 sm:flex-none flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-white text-navy-900 shadow-sm";
+        btnMatrix.className = "flex-1 sm:flex-none flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:text-navy-900 transition-all";
+      }
+    }
+
+    // Exportación a Excel/CSV
     function exportToCSV() {
-      let csv = "\uFEFF";
-      csv += "Integrante,Libro Deja de ser tu,Pelicula McFarland,Pelicula Whiplash,Video Aleta,1er Futuro,Estado 1,Por que 1,2do Futuro,Estado 2,Por que 2,3er Futuro,Estado 3,Por que 3,4to Futuro,Estado 4,Por que 4,5to Futuro,Estado 5,Por que 5\n";
+      let csvContent = "\uFEFF"; // UTF-8 BOM para tildes
+      csvContent += "Integrante,Deja de ser tú,McFarland,Whiplash,Aleta Compensación,1° Futuro,Estado 1,Motivo 1,2° Futuro,Estado 2,Motivo 2,3° Futuro,Estado 3,Motivo 3,4° Futuro,Estado 4,Motivo 4,5° Futuro,Estado 5,Motivo 5\n";
 
-      const escapeCSV = (str) => `"${(str || '').replace(/"/g, '""')}"`;
+      teamData.forEach(m => {
+        let row = [`"${m.name}"`];
+        m.activities.forEach(a => row.push(a ? '"SÍ"' : '"NO"'));
 
-      window.teamMembers.forEach(m => {
-        let row = [
-          escapeCSV(m.name),
-          m.activities.libro ? 'SI' : 'NO',
-          m.activities.mcfarland ? 'SI' : 'NO',
-          m.activities.whiplash ? 'SI' : 'NO',
-          m.activities.aleta ? 'SI' : 'NO'
-        ];
+        m.futures.forEach(f => {
+          row.push(`"${(f.goal || '').replace(/"/g, '""')}"`);
+          row.push(`"${getStatusLabel(f.status)}"`);
+          row.push(`"${(f.reason || '').replace(/"/g, '""')}"`);
+        });
 
-        for (let i = 1; i <= 5; i++) {
-          const f = m.futuros.find(x => x.num === i) || { title: '', status: '', why: '' };
-          row.push(escapeCSV(f.title));
-          row.push(escapeCSV(f.status));
-          row.push(escapeCSV(f.why));
-        }
-        csv += row.join(",") + "\n";
+        csvContent += row.join(",") + "\n";
       });
 
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `Seguimiento_NexusTeam_${new Date().toISOString().slice(0, 10)}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-
-      showToast('Archivo Excel descargado correctamente.');
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `Seguimiento_Futuros_Equipo_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
-
-    // Notificación Toast
-    function showToast(msg) {
-      const toast = document.getElementById('toastMessage');
-      const text = document.getElementById('toastText');
-      text.textContent = msg;
-      toast.classList.remove('opacity-0', 'translate-y-20', 'pointer-events-none');
-      setTimeout(() => {
-        toast.classList.add('opacity-0', 'translate-y-20', 'pointer-events-none');
-      }, 3500);
-    }
-
-    window.onload = function() {
-      initData();
-      renderApp();
-    };
   </script>
-
 </body>
 </html>
