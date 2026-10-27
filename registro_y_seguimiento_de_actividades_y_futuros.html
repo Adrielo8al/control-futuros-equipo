@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NexusTeam - Seguimiento de Futuros y Actividades</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Fuentes e Iconos -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            navy: {
+              900: '#0b1329',
+              800: '#111c38',
+              700: '#1b2a4e',
+              600: '#263b6a'
+            },
+            accent: {
+              gold: '#d97706',
+              goldLight: '#fef3c7'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Estilos de barra de desplazamiento personalizada */
+    ::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f8fafc;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans antialiased selection:bg-indigo-500 selection:text-white">
+
+  <!-- ================= Barra Superior / Header ================= -->
+  <header class="bg-navy-900 border-b border-navy-700/60 sticky top-0 z-40 text-white shadow-xl shadow-navy-900/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        
+        <!-- Logotipo / Identidad -->
+        <div class="flex items-center space-x-3.5">
+          <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-500 via-indigo-600 to-amber-400 p-[2px] shadow-lg shadow-indigo-500/25">
+            <div class="w-full h-full bg-navy-900 rounded-[14px] flex items-center justify-center">
+              <i class="fa-solid fa-bullseye text-indigo-400 text-lg"></i>
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="text-lg font-bold tracking-tight text-white">Nexus<span class="text-amber-400">Team</span></h1>
+              <span class="text-[10px] font-bold uppercase tracking-wider bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 px-2 py-0.5 rounded-full">Colaborativo</span>
+            </div>
+            <p class="text-xs text-slate-400 hidden sm:block">Registro de Actividades, 5 Futuros y Lecciones Compartidas</p>
+          </div>
+        </div>
+
+        <!-- Perfil Activo & Botón de Acción -->
+        <div class="flex items-center gap-3">
+          
+          <!-- Selector de integrante activo -->
+          <div class="flex items-center bg-navy-800 border border-navy-700/80 rounded-xl px-3 py-1.5 focus-within:border-indigo-500 transition-colors shadow-inner">
+            <i class="fa-solid fa-user-circle text-indigo-400 text-sm mr-2"></i>
+            <div class="flex flex-col">
+              <span class="text-[10px] uppercase font-semibold text-slate-400 leading-none">Mi Perfil:</span>
+              <select id="userSelector" onchange="changeCurrentUser(this.value)" class="bg-transparent text-xs sm:text-sm font-bold text-white focus:outline-none cursor-pointer pr-4 py-0.5">
+                <!-- Se llena dinámicamente -->
+              </select>
+            </div>
+          </div>
+
+          <!-- Botón de apertura de formulario de objetivos -->
+          <button onclick="openEditModal()" class="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-600 text-white text-xs sm:text-sm font-semibold px-4 py-2.5 rounded-xl shadow-md shadow-indigo-600/30 hover:shadow-indigo-600/45 transition-all transform active:scale-95">
+            <i class="fa-solid fa-pen-to-square"></i>
+            <span class="hidden md:inline">Actualizar Mis</span> Futuros
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= Contenedor Principal ================= -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+    <!-- Tarjeta de Bienvenida y Resumen del Integrante Seleccionado -->
+    <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-navy-900 via-navy-800 to-indigo-950 p-6 sm:p-8 text-white shadow-xl border border-navy-700/60">
+      <div class="absolute -right-16 -top-16 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute right-32 -bottom-20 w-56 h-56 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+      <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <div class="flex items-start sm:items-center gap-4">
+          <div id="currentUserAvatar" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-amber-500 to-indigo-500 p-[2px] shadow-lg flex-shrink-0">
+            <div class="w-full h-full bg-navy-900 rounded-[14px] flex items-center justify-center text-2xl font-black text-amber-400" id="avatarLetter">
+              A
+            </div>
+          </div>
+          <div>
+            <div class="flex flex-wrap items-center gap-2">
+              <h2 id="currentUserNameHeading" class="text-2xl sm:text-3xl font-extrabold tracking-tight">Armando</h2>
+              <span class="bg-amber-400/20 text-amber-300 text-xs font-semibold px-2.5 py-0.5 rounded-full border border-amber-400/30 flex items-center gap-1.5">
+                <i class="fa-solid fa-shield-halved text-[10px]"></i> Espacio Personal
+              </span>
+            </div>
+            <p id="currentUserSummaryText" class="text-slate-300 text-sm mt-1.5 max-w-2xl leading-relaxed">
+              Cargando estadísticas de cumplimiento y justificaciones...
+            </p>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3 pt-3 lg:pt-0 border-t lg:border-t-0 border-navy-700/60">
+          <button onclick="openEditModal()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-navy-900 text-sm font-bold px-5 py-3 rounded-xl transition shadow-lg shadow-amber-500/20">
+            <i class="fa-solid fa-plus-circle"></i>
+            Llenar o Justificar Objetivos
+          </button>
+          <button onclick="openDetailModalForUser(currentUserId)" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-navy-700/80 hover:bg-navy-700 text-slate-200 text-sm font-semibold px-4 py-3 rounded-xl border border-navy-600 transition">
+            <i class="fa-solid fa-eye"></i>
+            Ver Mi Ficha Completa
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Indicadores Globales de Progreso del Equipo (KPIs) -->
+    <section class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+      
+      <!-- Miembros Activos -->
+      <div class="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-sm flex items-center justify-between">
+        <div>
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Integrantes</span>
+          <p id="kpiTotalMembers" class="text-2xl sm:text-3xl font-black text-navy-900 mt-1">6</p>
+          <span class="text-[11px] text-slate-500 mt-0.5 flex items-center gap-1 font-medium">
+            <i class="fa-solid fa-users text-indigo-500"></i> En el equipo
+          </span>
+        </div>
+        <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-lg">
+          <i class="fa-solid fa-user-group"></i>
+        </div>
+      </div>
+
+      <!-- Futuros Cumplidos -->
+      <div class="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-sm flex items-center justify-between">
+        <div>
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Cumplidos</span>
+          <p id="kpiFulfilled" class="text-2xl sm:text-3xl font-black text-emerald-600 mt-1">0</p>
+          <span class="text-[11px] text-emerald-600 mt-0.5 flex items-center gap-1 font-semibold">
+            <i class="fa-solid fa-circle-check"></i> Objetivos logrados
+          </span>
+        </div>
+        <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg">
+          <i class="fa-solid fa-trophy"></i>
+        </div>
+      </div>
+
+      <!-- Futuros No Cumplidos -->
+      <div class="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-sm flex items-center justify-between">
+        <div>
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">No Cumplidos</span>
+          <p id="kpiUnfulfilled" class="text-2xl sm:text-3xl font-black text-rose-500 mt-1">0</p>
+          <span class="text-[11px] text-rose-500 mt-0.5 flex items-center gap-1 font-semibold">
+            <i class="fa-solid fa-triangle-exclamation"></i> Con justificación
+          </span>
+        </div>
+        <div class="w-12 h-12 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center text-lg">
+          <i class="fa-solid fa-circle-xmark"></i>
+        </div>
+      </div>
+
+      <!-- Tasa de Éxito / Rendimiento General -->
+      <div class="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-sm flex items-center justify-between">
+        <div>
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Efectividad</span>
+          <p id="kpiSuccessRate" class="text-2xl sm:text-3xl font-black text-indigo-600 mt-1">0%</p>
+          <span class="text-[11px] text-indigo-600 mt-0.5 flex items-center gap-1 font-semibold">
+            <i class="fa-solid fa-chart-line"></i> Tasa general
+          </span>
+        </div>
+        <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-lg">
+          <i class="fa-solid fa-award"></i>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Barra de Filtros, Búsqueda y Navegación de Vistas -->
+    <section class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-sm flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+      
+      <!-- Pestañas de Vista -->
+      <div class="inline-flex p-1 bg-slate-100 rounded-xl font-semibold text-xs sm:text-sm self-start">
+        <button id="btnTabMatriz" onclick="switchView('matriz')" class="px-4 py-2 rounded-lg bg-white text-navy-900 shadow-sm transition-all flex items-center gap-2">
+          <i class="fa-solid fa-table-cells"></i>
+          <span>Matriz de Control (Excel)</span>
+        </button>
+        <button id="btnTabMuro" onclick="switchView('muro')" class="px-4 py-2 rounded-lg text-slate-500 hover:text-slate-800 transition-all flex items-center gap-2">
+          <i class="fa-solid fa-chalkboard-user"></i>
+          <span>Muro de Transparencia</span>
+        </button>
+      </div>
+
+      <!-- Búsqueda y Filtro por Estado -->
+      <div class="flex flex-wrap items-center gap-3">
+        
+        <div class="relative flex-1 sm:w-64">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+          <input type="text" id="searchInput" oninput="renderApp()" placeholder="Buscar integrante u objetivo..." class="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-4 py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
+        </div>
+
+        <select id="filterStatus" onchange="renderApp()" class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          <option value="TODOS">Todos los Estados</option>
+          <option value="CUMPLIDO">Cumplidos</option>
+          <option value="NO_CUMPLIDO">No Cumplidos</option>
+          <option value="EN_PROGRESO">En Progreso / Pendientes</option>
+        </select>
+
+        <!-- Botones de Acción Extra -->
+        <button onclick="openNewMemberModal()" class="inline-flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-xl transition">
+          <i class="fa-solid fa-user-plus text-slate-500"></i>
+          <span class="hidden sm:inline">Nuevo</span> Integrante
+        </button>
+
+        <button onclick="exportToCSV()" class="inline-flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-xl transition">
+          <i class="fa-solid fa-file-excel text-emerald-600"></i>
+          <span>Descargar Excel</span>
+        </button>
+
+      </div>
+    </section>
+
+    <!-- ================= VISTA 1: MATRIZ DE CONTROL (TABLA TIPO EXCEL) ================= -->
+    <section id="viewMatriz" class="space-y-4">
+      <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs sm:text-sm">
+            <thead>
+              <tr class="bg-navy-900 text-slate-200 uppercase text-[11px] font-bold tracking-wider">
+                <th class="py-4 px-4 sticky left-0 bg-navy-900 z-20 shadow-md min-w-[150px]">Integrante</th>
+                <th class="py-4 px-3 text-center min-w-[95px]">Deja de ser tú</th>
+                <th class="py-4 px-3 text-center min-w-[95px]">McFarland</th>
+                <th class="py-4 px-3 text-center min-w-[95px]">Whiplash</th>
+                <th class="py-4 px-3 text-center min-w-[110px]">Aleta Compens.</th>
+                <th class="py-4 px-4 min-w-[180px]">1° Futuro</th>
+                <th class="py-4 px-4 min-w-[180px]">2° Futuro</th>
+                <th class="py-4 px-4 min-w-[180px]">3° Futuro</th>
+                <th class="py-4 px-4 min-w-[180px]">4° Futuro</th>
+                <th class="py-4 px-4 min-w-[180px]">5° Futuro</th>
+                <th class="py-4 px-3 text-center min-w-[95px]">Cumplimiento</th>
+                <th class="py-4 px-3 text-center min-w-[85px]">Acción</th>
+              </tr>
+            </thead>
+            <tbody id="matrixTableBody" class="divide-y divide-slate-100 text-slate-700">
+              <!-- Rellenado dinámicamente -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= VISTA 2: MURO DE TRANSPARENCIA Y MOTIVOS ================= -->
+    <section id="viewMuro" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Rellenado dinámicamente -->
+    </section>
+
+  </main>
+
+  <!-- ================= MODAL: ACTUALIZAR MIS OBJETIVOS Y ACTIVIDADES ================= -->
+  <div id="editModal" class="fixed inset-0 z-50 bg-navy-900/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 hidden">
+    <div class="bg-white rounded-3xl shadow-2xl border border-slate-200 max-w-3xl w-full max-h-[92vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      
+      <!-- Encabezado de Modal -->
+      <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-lg">
+            <i class="fa-solid fa-list-check"></i>
+          </div>
+          <div>
+            <h3 class="text-base sm:text-lg font-extrabold text-navy-900">Actualizar Mis Futuros y Actividades</h3>
+            <p class="text-xs text-slate-500">Editando perfil de: <span id="modalCurrentUserName" class="font-bold text-indigo-600">Armando</span></p>
+          </div>
+        </div>
+        <button onclick="closeEditModal()" class="w-8 h-8 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <!-- Cuerpo del Formulario con Scroll -->
+      <div class="px-6 py-6 overflow-y-auto space-y-6 flex-1 text-sm">
+        
+        <!-- Bloque 1: Actividades Grupales -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-indigo-600"></span> Actividades de Aprendizaje Grupal
+            </h4>
+            <span class="text-[11px] text-slate-400">Marca las que has completado</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+            <label class="flex items-center gap-3 p-2 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-indigo-300 transition select-none">
+              <input type="checkbox" id="editActLibro" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 border-slate-300">
+              <span class="text-xs font-semibold text-slate-700">Libro: Deja de ser tú</span>
+            </label>
+
+            <label class="flex items-center gap-3 p-2 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-indigo-300 transition select-none">
+              <input type="checkbox" id="editActMcfarland" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 border-slate-300">
+              <span class="text-xs font-semibold text-slate-700">Película: McFarland</span>
+            </label>
+
+            <label class="flex items-center gap-3 p-2 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-indigo-300 transition select-none">
+              <input type="checkbox" id="editActWhiplash" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 border-slate-300">
+              <span class="text-xs font-semibold text-slate-700">Película: Whiplash</span>
+            </label>
+
+            <label class="flex items-center gap-3 p-2 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-indigo-300 transition select-none">
+              <input type="checkbox" id="editActAleta" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 border-slate-300">
+              <span class="text-xs font-semibold text-slate-700">Vídeo: Aleta de Compensación</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Bloque 2: Los 5 Futuros con Motivos Obligatorios -->
+        <div class="space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pb-1 border-b border-slate-200">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-amber-500"></span> Los 5 Futuros Personales
+            </h4>
+            <span class="text-[11px] font-semibold text-amber-600 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full inline-flex items-center gap-1">
+              <i class="fa-solid fa-asterisk text-[9px]"></i> Justifica el porqué de cada uno
+            </span>
+          </div>
+
+          <div id="futurosInputsContainer" class="space-y-4">
+            <!-- 5 tarjetas de futuros insertadas mediante JS -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Pie del Modal -->
+      <div class="px-6 py-4 border-t border-slate-200 bg-slate-50 flex items-center justify-end gap-3">
+        <button onclick="closeEditModal()" class="px-4 py-2 text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-800 rounded-xl hover:bg-slate-200/60 transition">
+          Cancelar
+        </button>
+        <button onclick="saveCurrentUserFuturos()" class="px-5 py-2.5 text-xs sm:text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-md shadow-indigo-600/30 transition flex items-center gap-2">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          Guardar Mis Registros
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= MODAL: DETALLE / JUSTIFICACIONES ================= -->
+  <div id="detailModal" class="fixed inset-0 z-50 bg-navy-900/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 hidden">
+    <div class="bg-white rounded-3xl shadow-2xl border border-slate-200 max-w-2xl w-full max-h-[88vh] flex flex-col overflow-hidden">
+      <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+        <div>
+          <h3 id="detailModalTitle" class="text-base sm:text-lg font-bold text-navy-900">Detalle de Justificación</h3>
+          <p id="detailModalSubtitle" class="text-xs text-slate-500">Transparencia y reflexiones de equipo</p>
+        </div>
+        <button onclick="closeDetailModal()" class="w-8 h-8 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+      
+      <div id="detailModalContent" class="px-6 py-6 overflow-y-auto space-y-4 text-sm flex-1">
+        <!-- Contenido inyectado dinámicamente -->
+      </div>
+
+      <div class="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-end">
+        <button onclick="closeDetailModal()" class="px-4 py-2 text-xs sm:text-sm font-semibold text-slate-700 bg-slate-200 hover:bg-slate-300 rounded-xl transition">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: AGREGAR NUEVO INTEGRANTE ================= -->
+  <div id="newMemberModal" class="fixed inset-0 z-50 bg-navy-900/70 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl shadow-2xl border border-slate-200 max-w-sm w-full p-6 space-y-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold">
+          <i class="fa-solid fa-user-plus"></i>
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-navy-900">Nuevo Integrante</h3>
+          <p class="text-xs text-slate-500">Agrega un nuevo miembro a la plantilla</p>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Nombre o Apodo</label>
+        <input type="text" id="newMemberNameInput" placeholder="Ej: Camilo, Valentina..." class="w-full text-sm border border-slate-300 rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2">
+        <button onclick="closeNewMemberModal()" class="px-3.5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl">Cancelar</button>
+        <button onclick="confirmCreateNewMember()" class="px-4 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-md transition">Crear Integrante</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= Notificación Toast ================= -->
+  <div id="toastMessage" class="fixed bottom-5 right-5 z-50 bg-navy-900 text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 transition-all duration-300 transform translate-y-20 opacity-0 pointer-events-none text-xs sm:text-sm border border-navy-700">
+    <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
+    <span id="toastText">Operación realizada con éxito</span>
+  </div>
+
+  <!-- ================= Lógica de Negocio y Persistencia ================= -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    window.cloudDB = null;
+    window.appId = typeof __app_id !== 'undefined' ? __app_id : 'nexus-team-futuros';
+
+    // Inicialización si Firebase está provisto en el ambiente
+    if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+      try {
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        window.cloudDB = getFirestore(app);
+
+        const authToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        if (authToken) {
+          await signInWithCustomToken(auth, authToken);
+        } else {
+          await signInAnonymously(auth);
+        }
+
+        // Suscripción reactiva en tiempo real para sincronización instantánea
+        const syncDoc = doc(window.cloudDB, 'artifacts', window.appId, 'public', 'data', 'team_records', 'data');
+        onSnapshot(syncDoc, (snap) => {
+          if (snap.exists()) {
+            const remoteData = snap.data();
+            if (remoteData && remoteData.teamMembers) {
+              window.teamMembers = remoteData.teamMembers;
+              window.renderApp();
+            }
+          }
+        }, (err) => {
+          console.warn('Conexión en modo local offline:', err);
+        });
+
+      } catch (err) {
+        console.warn('Operando en modo de persistencia local offline:', err);
+      }
+    }
+  </script>
+
+  <script>
+    // Datos iniciales idénticos a los del archivo Excel original
+    const INITIAL_MEMBERS = [
+      {
+        id: 'armando',
+        name: 'Armando',
+        activities: { libro: true, mcfarland: true, whiplash: true, aleta: true },
+        futuros: [
+          { num: 1, title: 'Viaje a la costa', status: 'CUMPLIDO', why: 'Se planificó el presupuesto con 2 meses de anticipación y se reservó el hospedaje en temporada baja. Aprendizaje: La anticipación reduce el estrés.' },
+          { num: 2, title: 'Ser miembro del CIIA', status: 'CUMPLIDO', why: 'Aprobé la evaluación de admisión y presenté toda la documentación requerida a tiempo con el aval de los directores.' },
+          { num: 3, title: 'Curso de inglés B2', status: 'NO_CUMPLIDO', why: 'No se cumplió porque se cruzó con los horarios de entrega del proyecto de titulación y la carga laboral imprevista en el mes. Compromiso: Retomar el próximo mes con horario nocturno.' },
+          { num: 4, title: 'Ahorro mensual del 20%', status: 'CUMPLIDO', why: 'Se automatizó el débito a cuenta de ahorros el mismo día que ingresó el salario.' },
+          { num: 5, title: 'Rutina de ejercicio 4x por semana', status: 'NO_CUMPLIDO', why: 'Falta de disciplina en las dos últimas semanas debido a trasnochos en trabajos del equipo. Se necesita reorganizar la hora de sueño.' }
+        ]
+      },
+      {
+        id: 'jesus',
+        name: 'Jesús',
+        activities: { libro: true, mcfarland: true, whiplash: false, aleta: true },
+        futuros: [
+          { num: 1, title: 'Finalizar lectura de metodología ágil', status: 'CUMPLIDO', why: 'Lectura diaria de 15 páginas antes de comenzar las labores.' },
+          { num: 2, title: 'Lanzar prototipo v1', status: 'CUMPLIDO', why: 'El equipo cumplió los sprints a tiempo y se subió el demo para retroalimentación.' },
+          { num: 3, title: 'Certificación de Cloud Computing', status: 'NO_CUMPLIDO', why: 'El temario era más amplio de lo previsto; faltó práctica en entornos reales. Agendado nuevo examen para la próxima convocatoria.' },
+          { num: 4, title: 'Taller de oratoria para el equipo', status: 'EN_PROGRESO', why: 'Se seleccionó el capacitador y el temario; falta fijar fecha en el calendario común.' },
+          { num: 5, title: 'Reducir tiempo en redes sociales a 1h/día', status: 'NO_CUMPLIDO', why: 'No activé el bloqueo de aplicaciones en el celular y caí en procrastinación durante las tardes.' }
+        ]
+      },
+      {
+        id: 'jhanet',
+        name: 'Jhanet',
+        activities: { libro: true, mcfarland: true, whiplash: true, aleta: true },
+        futuros: [
+          { num: 1, title: 'Presentación de informe trimestral', status: 'CUMPLIDO', why: 'Consolidé los datos con 4 días de antelación.' },
+          { num: 2, title: 'Renovación de equipos de oficina', status: 'CUMPLIDO', why: 'Se aprobó la cotización más costo-eficiente y se implementó sin contratiempos.' },
+          { num: 3, title: 'Curso de Liderazgo Consciente', status: 'CUMPLIDO', why: 'Completé el 100% de las sesiones y ejercicios con el grupo de estudio.' },
+          { num: 4, title: 'Auditoría interna de procesos', status: 'EN_PROGRESO', why: 'Falta revisar los anexos finales del área financiera.' },
+          { num: 5, title: 'Fin de semana familiar sin pantallas', status: 'CUMPLIDO', why: 'Se organizó una salida al campo respetando los tiempos personales.' }
+        ]
+      },
+      {
+        id: 'paito',
+        name: 'Paito',
+        activities: { libro: false, mcfarland: true, whiplash: true, aleta: false },
+        futuros: [
+          { num: 1, title: 'Organización de archivos digitales', status: 'CUMPLIDO', why: 'Se migró la estructura de carpetas a una nomenclatura estandarizada.' },
+          { num: 2, title: 'Taller de finanzas personales', status: 'NO_CUMPLIDO', why: 'Se pospuso por coincidir con la semana de evaluaciones de la maestría.' },
+          { num: 3, title: 'Manual de bienvenida', status: 'EN_PROGRESO', why: 'Redactados los primeros 3 capítulos, faltan los diagramas de flujo.' },
+          { num: 4, title: 'Comprar implementos deportivos', status: 'CUMPLIDO', why: 'Aproveché descuentos del mes y ya los tengo en uso diario.' },
+          { num: 5, title: 'Voluntariado comunitario', status: 'NO_CUMPLIDO', why: 'No alcancé a inscribirme antes de la fecha de cierre de la fundación.' }
+        ]
+      },
+      {
+        id: 'patricia',
+        name: 'Patricia',
+        activities: { libro: true, mcfarland: true, whiplash: true, aleta: true },
+        futuros: [
+          { num: 1, title: 'Completar lectura mensual', status: 'CUMPLIDO', why: 'Asigné 30 minutos fijos cada noche antes de dormir.' },
+          { num: 2, title: 'Diseño de nueva imagen de marca', status: 'CUMPLIDO', why: 'Rondas de retroalimentación constructiva con el equipo y aprobación formal.' },
+          { num: 3, title: 'Lanzamiento de campaña publicitaria', status: 'NO_CUMPLIDO', why: 'Retrasos en la entrega de artes por parte del diseñador externo.' },
+          { num: 4, title: 'Capacitación en analítica de datos', status: 'CUMPLIDO', why: 'Completé el diplomado intensivo y apliqué las métricas al equipo.' },
+          { num: 5, title: 'Caminar 8,000 pasos al día', status: 'EN_PROGRESO', why: 'Se ha logrado en 18 de los últimos 25 días. Sigo mejorando la constancia.' }
+        ]
+      },
+      {
+        id: 'mateo',
+        name: 'Mateo',
+        activities: { libro: true, mcfarland: false, whiplash: true, aleta: true },
+        futuros: [
+          { num: 1, title: 'Optimización de base de datos', status: 'CUMPLIDO', why: 'Se crearon índices optimizados y se redujo la latencia de consultas un 40%.' },
+          { num: 2, title: 'Documentar APIs para el equipo', status: 'NO_CUMPLIDO', why: 'Prioricé atención de incidencias urgentes en producción.' },
+          { num: 3, title: 'Configurar backups automatizados', status: 'CUMPLIDO', why: 'Se programó el script cron con alertas por correo electrónico.' },
+          { num: 4, title: 'Revisión de seguridad de servidores', status: 'EN_PROGRESO', why: 'Escaneo ejecutado; falta aplicar parches de seguridad al sistema operativo.' },
+          { num: 5, title: 'Plan de hábitos saludables', status: 'CUMPLIDO', why: 'Se contrató asesoría nutricional y preparo alimentos con antelación.' }
+        ]
+      }
+    ];
+
+    const LOCAL_STORAGE_KEY = 'nexus_team_actividades_data_v2';
+    window.teamMembers = [];
+    window.currentUserId = 'armando';
+    let currentView = 'matriz';
+
+    // Carga inicial
+    function initData() {
+      const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (saved) {
+        try {
+          window.teamMembers = JSON.parse(saved);
+        } catch (e) {
+          window.teamMembers = INITIAL_MEMBERS;
+        }
+      } else {
+        window.teamMembers = INITIAL_MEMBERS;
+        saveData();
+      }
+    }
+
+    function saveData() {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(window.teamMembers));
+      syncWithCloud();
+    }
+
+    async function syncWithCloud() {
+      if (window.cloudDB) {
+        try {
+          const { doc, setDoc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+          const publicDoc = doc(window.cloudDB, 'artifacts', window.appId, 'public', 'data', 'team_records', 'data');
+          await setDoc(publicDoc, { teamMembers: window.teamMembers, lastUpdate: new Date().toISOString() });
+        } catch (e) {
+          console.warn("Sincronización en la nube en espera:", e);
+        }
+      }
+    }
+
+    function changeCurrentUser(newId) {
+      window.currentUserId = newId;
+      renderApp();
+    }
+
+    function switchView(view) {
+      currentView = view;
+      const matrizEl = document.getElementById('viewMatriz');
+      const muroEl = document.getElementById('viewMuro');
+      const btnMatriz = document.getElementById('btnTabMatriz');
+      const btnMuro = document.getElementById('btnTabMuro');
+
+      if (view === 'matriz') {
+        matrizEl.classList.remove('hidden');
+        muroEl.classList.add('hidden');
+        btnMatriz.className = "px-4 py-2 rounded-lg bg-white text-navy-900 shadow-sm transition-all flex items-center gap-2";
+        btnMuro.className = "px-4 py-2 rounded-lg text-slate-500 hover:text-slate-800 transition-all flex items-center gap-2";
+      } else {
+        matrizEl.classList.add('hidden');
+        muroEl.classList.remove('hidden');
+        btnMuro.className = "px-4 py-2 rounded-lg bg-white text-navy-900 shadow-sm transition-all flex items-center gap-2";
+        btnMatriz.className = "px-4 py-2 rounded-lg text-slate-500 hover:text-slate-800 transition-all flex items-center gap-2";
+      }
+    }
+
+    function getStatusBadge(status) {
+      switch(status) {
+        case 'CUMPLIDO':
+          return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                    <i class="fa-solid fa-check text-[9px]"></i> Cumplido
+                  </span>`;
+        case 'NO_CUMPLIDO':
+          return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-100 text-rose-800 border border-rose-200">
+                    <i class="fa-solid fa-xmark text-[9px]"></i> No Cumplido
+                  </span>`;
+        default:
+          return `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                    <i class="fa-solid fa-clock text-[9px]"></i> En Progreso
+                  </span>`;
+      }
+    }
+
+    function renderApp() {
+      // 1. Selector de usuario
+      const selector = document.getElementById('userSelector');
+      selector.innerHTML = window.teamMembers.map(m => `
+        <option value="${m.id}" ${m.id === window.currentUserId ? 'selected' : ''}>${m.name}</option>
+      `).join('');
+
+      // 2. Banner de usuario activo
+      const activeUser = window.teamMembers.find(m => m.id === window.currentUserId) || window.teamMembers[0];
+      if (activeUser) {
+        document.getElementById('currentUserNameHeading').textContent = activeUser.name;
+        document.getElementById('avatarLetter').textContent = activeUser.name.charAt(0).toUpperCase();
+
+        const userFulfilled = activeUser.futuros.filter(f => f.status === 'CUMPLIDO').length;
+        const userUnfulfilled = activeUser.futuros.filter(f => f.status === 'NO_CUMPLIDO').length;
+        const totalUserFuturos = activeUser.futuros.length;
+
+        document.getElementById('currentUserSummaryText').innerHTML = `
+          Has alcanzado <span class="text-amber-400 font-bold">${userFulfilled}</span> de tus ${totalUserFuturos} objetivos planeados. Registras <span class="text-rose-400 font-bold">${userUnfulfilled}</span> compromisos con causas detalladas. ¡La transparencia construye equipos sólidos!
+        `;
+      }
+
+      // 3. KPIs del Equipo
+      let totalFuturos = 0;
+      let totalFulfilled = 0;
+      let totalUnfulfilled = 0;
+
+      window.teamMembers.forEach(m => {
+        m.futuros.forEach(f => {
+          totalFuturos++;
+          if (f.status === 'CUMPLIDO') totalFulfilled++;
+          if (f.status === 'NO_CUMPLIDO') totalUnfulfilled++;
+        });
+      });
+
+      document.getElementById('kpiTotalMembers').textContent = window.teamMembers.length;
+      document.getElementById('kpiFulfilled').textContent = totalFulfilled;
+      document.getElementById('kpiUnfulfilled').textContent = totalUnfulfilled;
+      const rate = totalFuturos > 0 ? Math.round((totalFulfilled / totalFuturos) * 100) : 0;
+      document.getElementById('kpiSuccessRate').textContent = `${rate}%`;
+
+      // 4. Filtrado
+      const search = (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
+      const statusFilter = document.getElementById('filterStatus')?.value || 'TODOS';
+
+      const filtered = window.teamMembers.filter(m => {
+        const matchesName = m.name.toLowerCase().includes(search);
+        const matchesFuturo = m.futuros.some(f => f.title.toLowerCase().includes(search) || (f.why && f.why.toLowerCase().includes(search)));
+        if (!matchesName && !matchesFuturo) return false;
+
+        if (statusFilter !== 'TODOS') {
+          return m.futuros.some(f => f.status === statusFilter);
+        }
+        return true;
+      });
+
+      // 5. Render de Matriz (Tabla)
+      const tbody = document.getElementById('matrixTableBody');
+      tbody.innerHTML = '';
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="12" class="text-center py-8 text-slate-400">No se encontraron resultados con los filtros actuales.</td></tr>`;
+      } else {
+        filtered.forEach(m => {
+          const fulfilledCount = m.futuros.filter(f => f.status === 'CUMPLIDO').length;
+          const unfulfilledCount = m.futuros.filter(f => f.status === 'NO_CUMPLIDO').length;
+
+          const tr = document.createElement('tr');
+          tr.className = "hover:bg-slate-50/80 transition-colors border-b border-slate-100";
+
+          const renderActCheck = (val) => val
+            ? `<span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 font-bold text-xs" title="Cumplido"><i class="fa-solid fa-check"></i></span>`
+            : `<span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 text-slate-400 font-bold text-xs" title="No realizado"><i class="fa-solid fa-xmark"></i></span>`;
+
+          const futurosCols = [1, 2, 3, 4, 5].map(idx => {
+            const fut = m.futuros.find(f => f.num === idx) || { title: 'Sin definir', status: 'EN_PROGRESO', why: '' };
+            return `
+              <td class="py-3 px-4 max-w-[210px]">
+                <div class="font-semibold text-slate-800 truncate" title="${fut.title}">${fut.title}</div>
+                <div class="mt-1 flex items-center justify-between gap-1">
+                  ${getStatusBadge(fut.status)}
+                  <button onclick="openSingleFuturoDetail('${m.id}', ${idx})" class="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 underline ml-1" title="Ver Justificación / El Porqué">
+                    ¿Por qué?
+                  </button>
+                </div>
+              </td>
+            `;
+          }).join('');
+
+          tr.innerHTML = `
+            <td class="py-4 px-4 font-bold text-slate-900 sticky left-0 bg-white shadow-sm flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-xl bg-navy-900 text-amber-400 flex items-center justify-center font-bold text-xs flex-shrink-0">
+                ${m.name.charAt(0).toUpperCase()}
+              </div>
+              <div class="truncate">
+                <span class="block text-slate-900">${m.name}</span>
+                ${m.id === window.currentUserId ? '<span class="text-[9px] uppercase font-extrabold text-indigo-600 bg-indigo-50 px-1.5 py-0.2 rounded border border-indigo-200">TÚ</span>' : ''}
+              </div>
+            </td>
+            <td class="py-3 px-3 text-center">${renderActCheck(m.activities.libro)}</td>
+            <td class="py-3 px-3 text-center">${renderActCheck(m.activities.mcfarland)}</td>
+            <td class="py-3 px-3 text-center">${renderActCheck(m.activities.whiplash)}</td>
+            <td class="py-3 px-3 text-center">${renderActCheck(m.activities.aleta)}</td>
+            ${futurosCols}
+            <td class="py-3 px-3 text-center">
+              <span class="text-xs font-bold text-emerald-600">${fulfilledCount} ✓</span>
+              <span class="text-slate-300 mx-1">|</span>
+              <span class="text-xs font-bold text-rose-500">${unfulfilledCount} ✕</span>
+            </td>
+            <td class="py-3 px-3 text-center">
+              <button onclick="openDetailModalForUser('${m.id}')" class="px-2.5 py-1 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg transition" title="Ver todo">
+                <i class="fa-solid fa-eye text-indigo-600"></i> Ficha
+              </button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      // 6. Render de Muro de Transparencia
+      const muroContainer = document.getElementById('viewMuro');
+      muroContainer.innerHTML = '';
+
+      filtered.forEach(m => {
+        const card = document.createElement('div');
+        card.className = "bg-white rounded-3xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow";
+
+        const itemsHtml = m.futuros.map(f => {
+          let borderTheme = f.status === 'CUMPLIDO' ? 'border-emerald-200 bg-emerald-50/40' : (f.status === 'NO_CUMPLIDO' ? 'border-rose-200 bg-rose-50/40' : 'border-amber-200 bg-amber-50/40');
+          return `
+            <div class="p-3.5 rounded-2xl border ${borderTheme} space-y-2">
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-xs font-extrabold text-navy-900">${f.num}° Futuro: ${f.title}</span>
+                ${getStatusBadge(f.status)}
+              </div>
+              <div class="bg-white/90 p-3 rounded-xl border border-slate-100 text-xs">
+                <strong class="text-slate-800 text-[11px] uppercase tracking-wider block mb-1 flex items-center gap-1">
+                  <i class="fa-solid fa-comment-dots text-indigo-500"></i> ¿Por qué se cumplió o no?
+                </strong>
+                <p class="italic text-slate-700 leading-relaxed">${f.why ? f.why : 'Sin justificación detallada.'}</p>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        card.innerHTML = `
+          <div class="space-y-5">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-2xl bg-navy-900 text-amber-400 font-extrabold text-lg flex items-center justify-center shadow-md">
+                  ${m.name.charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <h3 class="font-bold text-navy-900 text-base leading-tight">${m.name}</h3>
+                  <p class="text-xs text-slate-400 mt-0.5">
+                    Libro: ${m.activities.libro ? '✓' : '✕'} • Cine: ${m.activities.mcfarland && m.activities.whiplash ? '2/2' : '1/2'}
+                  </p>
+                </div>
+              </div>
+
+              ${m.id === window.currentUserId ? `
+                <button onclick="openEditModal()" class="text-xs font-bold bg-indigo-50 hover:bg-indigo-100 text-indigo-600 px-3 py-1.5 rounded-xl transition">
+                  <i class="fa-solid fa-pen-to-square"></i> Editar
+                </button>
+              ` : ''}
+            </div>
+
+            <div class="space-y-3">
+              ${itemsHtml}
+            </div>
+          </div>
+
+          <div class="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+            <span>Rendimiento del participante</span>
+            <span class="font-extrabold text-navy-900">${m.futuros.filter(f => f.status === 'CUMPLIDO').length} de 5 cumplidos</span>
+          </div>
+        `;
+        muroContainer.appendChild(card);
+      });
+    }
+
+    // Modal de Edición del Usuario Actual
+    function openEditModal() {
+      const user = window.teamMembers.find(m => m.id === window.currentUserId);
+      if (!user) return;
+
+      document.getElementById('modalCurrentUserName').textContent = user.name;
+      document.getElementById('editActLibro').checked = !!user.activities.libro;
+      document.getElementById('editActMcfarland').checked = !!user.activities.mcfarland;
+      document.getElementById('editActWhiplash').checked = !!user.activities.whiplash;
+      document.getElementById('editActAleta').checked = !!user.activities.aleta;
+
+      const container = document.getElementById('futurosInputsContainer');
+      container.innerHTML = '';
+
+      for (let i = 1; i <= 5; i++) {
+        const fut = user.futuros.find(f => f.num === i) || { num: i, title: '', status: 'EN_PROGRESO', why: '' };
+        const div = document.createElement('div');
+        div.className = "bg-slate-50 border border-slate-200 p-4 rounded-2xl space-y-3";
+        div.innerHTML = `
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <span class="text-xs font-extrabold text-navy-900 uppercase tracking-wider flex items-center gap-1.5">
+              <i class="fa-solid fa-flag text-amber-500"></i> Futuro #${i}
+            </span>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-semibold text-slate-600">Estado:</span>
+              <select id="inputFuturoStatus_${i}" class="text-xs font-bold border border-slate-300 rounded-xl px-2.5 py-1 bg-white focus:ring-2 focus:ring-indigo-500">
+                <option value="EN_PROGRESO" ${fut.status === 'EN_PROGRESO' ? 'selected' : ''}>En Progreso</option>
+                <option value="CUMPLIDO" ${fut.status === 'CUMPLIDO' ? 'selected' : ''}>Cumplido</option>
+                <option value="NO_CUMPLIDO" ${fut.status === 'NO_CUMPLIDO' ? 'selected' : ''}>No Cumplido</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Título del Futuro / Meta personal:</label>
+            <input type="text" id="inputFuturoTitle_${i}" value="${fut.title || ''}" placeholder="Ej: Viaje a la costa, Curso de inglés..." class="w-full text-xs sm:text-sm px-3.5 py-2 border border-slate-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1 flex items-center justify-between">
+              <span>¿Por qué se cumplió o no? (Causas, aprendizajes o motivos):</span>
+              <span class="text-[11px] text-indigo-600 font-semibold">Requerido</span>
+            </label>
+            <textarea id="inputFuturoWhy_${i}" rows="2" placeholder="Explica detalladamente qué te permitió lograrlo o qué imprevistos te impidieron cumplirlo..." class="w-full text-xs sm:text-sm p-3 border border-slate-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">${fut.why || ''}</textarea>
+          </div>
+        `;
+        container.appendChild(div);
+      }
+
+      document.getElementById('editModal').classList.remove('hidden');
+    }
+
+    function closeEditModal() {
+      document.getElementById('editModal').classList.add('hidden');
+    }
+
+    function saveCurrentUserFuturos() {
+      const user = window.teamMembers.find(m => m.id === window.currentUserId);
+      if (!user) return;
+
+      user.activities.libro = document.getElementById('editActLibro').checked;
+      user.activities.mcfarland = document.getElementById('editActMcfarland').checked;
+      user.activities.whiplash = document.getElementById('editActWhiplash').checked;
+      user.activities.aleta = document.getElementById('editActAleta').checked;
+
+      const updatedFuturos = [];
+      for (let i = 1; i <= 5; i++) {
+        const title = document.getElementById(`inputFuturoTitle_${i}`).value.trim();
+        const status = document.getElementById(`inputFuturoStatus_${i}`).value;
+        const why = document.getElementById(`inputFuturoWhy_${i}`).value.trim();
+
+        updatedFuturos.push({
+          num: i,
+          title: title || `Futuro #${i}`,
+          status: status,
+          why: why
+        });
+      }
+      user.futuros = updatedFuturos;
+
+      saveData();
+      renderApp();
+      closeEditModal();
+      showToast('Tus objetivos y explicaciones han sido actualizados.');
+    }
+
+    // Modal de Detalles Individuales
+    function openSingleFuturoDetail(memberId, num) {
+      const member = window.teamMembers.find(m => m.id === memberId);
+      if (!member) return;
+      const fut = member.futuros.find(f => f.num === num);
+      if (!fut) return;
+
+      document.getElementById('detailModalTitle').textContent = `${member.name} — ${fut.num}° Futuro: ${fut.title}`;
+      document.getElementById('detailModalSubtitle').textContent = "Justificación transparente compartida con el equipo";
+
+      const content = document.getElementById('detailModalContent');
+      content.innerHTML = `
+        <div class="space-y-4">
+          <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-200">
+            <div>
+              <span class="text-xs uppercase font-bold text-slate-400">Estado</span>
+              <div class="mt-1">${getStatusBadge(fut.status)}</div>
+            </div>
+            <div class="text-right">
+              <span class="text-xs uppercase font-bold text-slate-400">Integrante</span>
+              <p class="font-extrabold text-navy-900">${member.name}</p>
+            </div>
+          </div>
+
+          <div class="p-5 rounded-2xl border border-indigo-100 bg-indigo-50/50">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-indigo-900 mb-2 flex items-center gap-1.5">
+              <i class="fa-solid fa-quote-left text-indigo-500"></i> ¿Por qué se cumplió o no? (Motivos y Lecciones):
+            </h4>
+            <p class="text-slate-800 text-sm leading-relaxed italic whitespace-pre-wrap">${fut.why ? fut.why : 'Sin justificación detallada todavía.'}</p>
+          </div>
+        </div>
+      `;
+      document.getElementById('detailModal').classList.remove('hidden');
+    }
+
+    function openDetailModalForUser(memberId) {
+      const member = window.teamMembers.find(m => m.id === memberId);
+      if (!member) return;
+
+      document.getElementById('detailModalTitle').textContent = `Ficha Completa de ${member.name}`;
+      document.getElementById('detailModalSubtitle').textContent = "Todos los compromisos, estados y justificaciones";
+
+      const content = document.getElementById('detailModalContent');
+      const itemsHtml = member.futuros.map(f => `
+        <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+          <div class="flex items-center justify-between">
+            <h5 class="font-extrabold text-navy-900 text-sm">${f.num}° Futuro: ${f.title}</h5>
+            ${getStatusBadge(f.status)}
+          </div>
+          <div class="bg-white p-3 rounded-xl border border-slate-200 text-xs">
+            <strong class="text-slate-700 block text-[11px] uppercase mb-1">¿Por qué?:</strong>
+            <p class="italic text-slate-800 leading-relaxed">${f.why ? f.why : 'Sin justificación.'}</p>
+          </div>
+        </div>
+      `).join('');
+
+      content.innerHTML = `
+        <div class="space-y-4">
+          <div class="p-4 bg-navy-900 text-white rounded-2xl flex items-center justify-between">
+            <div>
+              <p class="text-xs uppercase font-bold text-slate-400">Actividades formativas</p>
+              <p class="text-xs mt-1">Libro: ${member.activities.libro ? '✓' : '✕'} | McFarland: ${member.activities.mcfarland ? '✓' : '✕'} | Whiplash: ${member.activities.whiplash ? '✓' : '✕'} | Aleta: ${member.activities.aleta ? '✓' : '✕'}</p>
+            </div>
+            <div class="text-right">
+              <p class="text-xs uppercase font-bold text-slate-400">Cumplimiento</p>
+              <p class="text-base font-black text-amber-400">${member.futuros.filter(f => f.status === 'CUMPLIDO').length} de 5</p>
+            </div>
+          </div>
+          ${itemsHtml}
+        </div>
+      `;
+      document.getElementById('detailModal').classList.remove('hidden');
+    }
+
+    function closeDetailModal() {
+      document.getElementById('detailModal').classList.add('hidden');
+    }
+
+    // Modal para Nuevo Integrante
+    function openNewMemberModal() {
+      document.getElementById('newMemberNameInput').value = '';
+      document.getElementById('newMemberModal').classList.remove('hidden');
+      document.getElementById('newMemberNameInput').focus();
+    }
+
+    function closeNewMemberModal() {
+      document.getElementById('newMemberModal').classList.add('hidden');
+    }
+
+    function confirmCreateNewMember() {
+      const name = document.getElementById('newMemberNameInput').value.trim();
+      if (!name) return;
+
+      const newId = name.toLowerCase().replace(/[^a-z0-9]/g, '_') + '_' + Date.now().toString().slice(-4);
+      const newMember = {
+        id: newId,
+        name: name,
+        activities: { libro: false, mcfarland: false, whiplash: false, aleta: false },
+        futuros: [
+          { num: 1, title: 'Objetivo 1', status: 'EN_PROGRESO', why: '' },
+          { num: 2, title: 'Objetivo 2', status: 'EN_PROGRESO', why: '' },
+          { num: 3, title: 'Objetivo 3', status: 'EN_PROGRESO', why: '' },
+          { num: 4, title: 'Objetivo 4', status: 'EN_PROGRESO', why: '' },
+          { num: 5, title: 'Objetivo 5', status: 'EN_PROGRESO', why: '' }
+        ]
+      };
+
+      window.teamMembers.push(newMember);
+      window.currentUserId = newId;
+      saveData();
+      renderApp();
+      closeNewMemberModal();
+      showToast(`Integrante ${name} creado con éxito.`);
+    }
+
+    // Exportación a formato Excel (CSV con soporte de tildes UTF-8)
+    function exportToCSV() {
+      let csv = "\uFEFF"; // Byte Order Mark para correcta codificación en Microsoft Excel
+      csv += "Integrante,Libro Deja de ser tu,Pelicula McFarland,Pelicula Whiplash,Video Aleta,1er Futuro,Estado 1,Por que 1,2do Futuro,Estado 2,Por que 2,3er Futuro,Estado 3,Por que 3,4to Futuro,Estado 4,Por que 4,5to Futuro,Estado 5,Por que 5\n";
+
+      const escapeCSV = (str) => `"${(str || '').replace(/"/g, '""')}"`;
+
+      window.teamMembers.forEach(m => {
+        let row = [
+          escapeCSV(m.name),
+          m.activities.libro ? 'SI' : 'NO',
+          m.activities.mcfarland ? 'SI' : 'NO',
+          m.activities.whiplash ? 'SI' : 'NO',
+          m.activities.aleta ? 'SI' : 'NO'
+        ];
+
+        for (let i = 1; i <= 5; i++) {
+          const f = m.futuros.find(x => x.num === i) || { title: '', status: '', why: '' };
+          row.push(escapeCSV(f.title));
+          row.push(escapeCSV(f.status));
+          row.push(escapeCSV(f.why));
+        }
+        csv += row.join(",") + "\n";
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Seguimiento_NexusTeam_${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      showToast('Archivo Excel descargado correctamente.');
+    }
+
+    // Toast flotante
+    function showToast(msg) {
+      const toast = document.getElementById('toastMessage');
+      const text = document.getElementById('toastText');
+      text.textContent = msg;
+      toast.classList.remove('opacity-0', 'translate-y-20', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-20', 'pointer-events-none');
+      }, 3500);
+    }
+
+    // Arranque de la aplicación
+    window.onload = function() {
+      initData();
+      renderApp();
+    };
+  </script>
+
+</body>
+</html>
